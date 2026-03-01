@@ -1,0 +1,441 @@
+# HireFast — Cursor Rules
+# Last updated: Session 3 complete — 01/03/2026
+
+---
+## Agent Reminder
+Always read `HIREFAST_CONTEXT.md` at the start of a new session. The user may say "Read @HIREFAST_CONTEXT.md and @.cursorrules" — do this first before any other work.
+
+---
+
+## What is HireFast?
+HireFast is a high-velocity UK recruitment platform targeting volume hiring 
+in logistics, engineering, manufacturing, retail, hospitality, and care sectors.
+Core value proposition: speed and zero friction.
+"The UK's fastest route from applicant to hire."
+
+**The two problems we solve:**
+- Drop-off Crisis: 60-80% of candidates abandon traditional job applications on mobile
+- Ghosting Crisis: Candidates and recruiters both go silent mid-process
+
+---
+
+## Tech Stack
+- Frontend: React + TypeScript + Vite
+- Styling: Tailwind CSS v4 (@tailwindcss/vite plugin — NO tailwind.config.js ever)
+- Backend: Supabase (PostgreSQL + Magic Link Auth — NO passwords ever)
+- Routing: React Router DOM v6
+- Icons: lucide-react only (no other icon libraries)
+- Utilities: clsx + tailwind-merge (cn() at src/lib/utils.ts)
+- Components: Shadcn/UI (already installed)
+- Tables: @tanstack/react-table (already installed)
+- Animation: Framer Motion (already installed)
+- Fonts: DM Sans + DM Mono (loaded via Google Fonts in index.html)
+- Hosting: Vercel (frontend) + Supabase (backend)
+
+---
+
+## Brand & Design Tokens v2.0
+DO NOT use old tokens (#0f1624, #141f33, #2a3a5c, #6b7fa3). Always use v2.0.
+
+### Backgrounds
+- Page background:    #090d16   (bg-[#090d16])
+- Surface/card:       #0f1522   (bg-[#0f1522])
+- Elevated input:     #141d2e   (bg-[#141d2e])
+- Hover/subtle:       #1a2438   (bg-[#1a2438])
+- Active/pressed:     #243352   (bg-[#243352])
+
+### Borders
+- Default border:     #1f2d47   (border-[#1f2d47])
+- Subtle border:      #1a2438
+
+### Text
+- Primary:            #f0f4ff
+- Secondary:          #8494b4
+- Muted/disabled:     #4d5f7a
+- Placeholder:        #4d5f7a
+
+### Brand
+- Primary action:     #3b6ef5
+- Hover:              #4d7ef6
+- Active:             #2d5ae0
+
+### Typography
+- UI font: DM Sans (weights: 300, 400, 500, 600, 700)
+- Numeric/mono: DM Mono (weights: 400, 500)
+- ALL numeric data: font-mono tabular-nums
+- Headings: tracking-tight font-semibold text-white
+- Metadata/labels: text-[#8494b4]
+- Data values: text-white tabular-nums
+
+### Border Radius
+- Cards:        rounded-[14px]
+- Inputs:       rounded-[10px]
+- Buttons:      rounded-[10px]
+- Badges/chips: rounded-[6px]
+- Pills:        rounded-full
+- Nav items:    rounded-[8px]
+- Tab triggers: rounded-[8px]
+
+### Wordmark
+"Hire" in text-white + "Fast" in text-[#3b6ef5], font-bold tracking-tight
+
+---
+
+## Truth Engine — Semantic Colours
+RESERVED for match/risk indicators ONLY. Never decorative.
+- Emerald (Safe/Match): text-emerald-400 bg-emerald-500/10 border-emerald-500/25
+- Amber (Warning/Caution): text-amber-400 bg-amber-500/10 border-amber-500/25
+- Rose (Risk/Reject): text-rose-400 bg-rose-500/10 border-rose-500/25
+
+---
+
+## Sector Colours (consistent across all pages)
+- Logistics/Warehousing: blue-500 family, Truck icon
+- Engineering/Manufacturing: violet-500 family, Wrench icon
+- Retail: pink-500 family, ShoppingBag icon
+- Care: emerald-500 family, Heart icon
+- Driving: amber-500 family, Car icon
+- Hospitality: orange-500 family, UtensilsCrossed icon
+
+---
+
+## Project Location
+C:\Users\tomfo\Documents\HireFast\hirefast-v2\hirefast-v2
+
+---
+
+## Supabase Schema
+
+### candidates
+- id uuid PK
+- user_id uuid (references auth.users)
+- email text
+- full_name text
+- phone text
+- postcode text (full — never expose in UI)
+- candidate_skills text[]
+- has_rtw boolean
+- rtw_verified boolean
+- ni_confirmed boolean
+- dbs_status text
+- availability text[]
+- has_vehicle boolean
+- transport_mode text
+- cv_url text
+- cv_text text
+- profile_token text
+- speed_summary text
+- created_at timestamptz
+- updated_at timestamptz
+
+### jobs
+- id uuid PK
+- employer_id uuid (FK → employers.id)
+- recruiter_id uuid
+- title text
+- location_name text
+- postcode text
+- sector text
+- pay_rate text
+- description text
+- shift_patterns text[]
+- commute_threshold_mins integer (default 45)
+- required_skills text[]
+- auto_reject_low_matches boolean
+- immediate_start boolean
+- is_active boolean
+- status text
+- created_at timestamptz
+
+### applications
+- id uuid PK
+- job_id uuid (FK → jobs.id)
+- employer_id uuid (FK → employers.id)
+- candidate_id uuid (FK → candidates.id)
+- full_name text
+- email text
+- phone text
+- candidate_postcode text (full — never expose in UI)
+- commute_distance_miles double precision
+- commute_risk_level text ('low' | 'medium' | 'high')
+- journey_time_mins integer
+- match_score integer
+- status text (default: 'pending')
+- outcome text
+- has_rtw boolean
+- has_certs boolean
+- candidate_skills text[]
+- interest_status text (default: 'none')
+- interest_check_token text
+- interest_check_sent_at timestamptz
+- interest_confirmed_at timestamptz
+- last_contacted_at timestamptz
+- shortlisted_at timestamptz
+- reason text
+- created_at timestamptz
+
+### employers
+- id uuid PK
+- company_name text
+- admin_email text
+- industry_sector text
+- location text
+- website text
+- company_description text
+- created_by uuid
+- created_at timestamptz
+
+### recruiter_employers
+- user_id uuid
+- employer_id uuid (FK → employers.id)
+
+### ratings
+- id uuid PK
+- job_id uuid (FK → jobs.id)
+- recruiter_id uuid
+- candidate_id uuid
+- rated_by text ('recruiter' or 'candidate')
+- score integer (1-5)
+- comment text
+- created_at timestamptz
+
+### application_events
+- id uuid PK
+- application_id uuid (FK → applications.id)
+- event_type text
+- message text
+- created_at timestamptz
+
+---
+
+## Shift & Availability Array Format
+Both job.shift_patterns and candidate.availability use plain English strings.
+Standard values:
+'Early (6am-2pm)', 'Late (2pm-10pm)', 'Nights (10pm-6am)',
+'Days (7am-7pm)', 'Nights (7pm-7am)', '4-on 4-off',
+'Mornings', 'Afternoons', 'Weekends', 'Flexible'
+Matching is case-insensitive exact string comparison.
+
+---
+
+## RLS Policies (current)
+- applications: 
+  Candidates INSERT (job must be active)
+  Candidates SELECT own (via candidate_id → candidates.user_id)
+  Recruiters ALL (scoped to their jobs via recruiter_id)
+- candidates: 
+  Anyone INSERT (with_check: true)
+  Candidates SELECT/UPDATE own (user_id = auth.uid())
+- employers: Recruiters ALL (scoped to created_by)
+- jobs: Recruiters ALL (scoped to recruiter_id)
+- recruiter_employers: Users SELECT own, Service role ALL
+
+---
+
+## Key Architecture Decisions
+- Auth: Magic Links only. No passwords. Ever.
+- Registration flow:
+  1. Register page collects name/email/postcode
+  2. Stores in localStorage as 'hirefast_pending_candidate'
+  3. Sends magic link via supabase.auth.signInWithOtp()
+  4. MagicLinkHandler creates candidates row after session established
+  5. Redirects to /candidate/verify
+- Post-auth routing: MagicLinkHandler checks recruiter_employers.
+  Match found → /recruiter/applicants
+  No match + existing candidate → /candidate/jobs
+  No match + new candidate → /candidate/verify
+- Recruiter layout: RecruiterLayout.tsx wraps all recruiter pages.
+  max-w-5xl canvas. src/layouts/RecruiterLayout.tsx
+- Candidate nav: HireFast wordmark left + Jobs/Settings links right
+- Commute scoring: Postcodes.io (free, no API key)
+  Postcode must be stripped of spaces before API call:
+  postcode.replace(/\s+/g, '')
+  Haversine distance. Journey time by transport mode.
+  Utility: src/lib/commuteScoring.ts
+  Add 200ms delay between calls to avoid rate limiting
+- Match scoring: 50% location + 50% skills
+  Location: low=100, medium=60, high=20
+  Skills: matched/required * 100. No required skills = 100
+  Fires async after application INSERT — never blocks success screen
+- Candidate sheet: Clicking row in ManageApplicants opens
+  Shadcn Sheet (side="right", max-w-2xl). Never navigate away.
+- Postcode privacy: show outward code only (e.g. "S1")
+  Never log or display full postcodes
+- Self-declared data: RTW, NI, DBS always labelled "(Self-declared)"
+- Duplicate applications: UNIQUE constraint on (job_id, email)
+  Handle 409 as success if application already exists
+
+---
+
+## Component Standards
+
+### Cards
+- Always: bg-[#0f1522] border border-[#1f2d47] rounded-[14px]
+- Stat cards: add top-edge glow inside:
+  <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#3b6ef5]/30 to-transparent" />
+
+### Inputs
+- Always: bg-[#141d2e] border border-[#1f2d47] rounded-[10px]
+- Focus: focus:border-[#3b6ef5] focus:ring-1 focus:ring-[#3b6ef5]
+- Placeholder: placeholder:text-[#4d5f7a]
+
+### Buttons — Primary
+- bg-[#3b6ef5] hover:bg-[#4d7ef6] rounded-[10px] font-semibold
+- Mobile: active:scale-[0.98] transition
+
+### Buttons — Secondary
+- border border-[#1f2d47] bg-[#0f1522] text-[#8494b4] rounded-[10px]
+- Hover: hover:border-[#3b6ef5] hover:text-[#3b6ef5]
+
+### Badges
+- Shortlisted: border-[#3b6ef5]/25 bg-[#3b6ef5]/10 text-[#3b6ef5] rounded-[6px]
+- Pending: border-[#1f2d47] bg-[#1a2438] text-[#8494b4] rounded-[6px]
+- Rejected: border-rose-500/25 bg-rose-500/10 text-rose-400 rounded-[6px]
+
+### Navigation
+- Header: bg-[#090d16]/90 backdrop-blur-xl border-b border-[#1f2d47]
+- Active: text-[#3b6ef5] rounded-[8px]
+- Inactive: text-[#8494b4] hover:text-white rounded-[8px]
+
+### Tabs
+- TabsList: bg-[#090d16] border border-[#1f2d47] rounded-[10px]
+- TabsTrigger inactive: text-[#8494b4] rounded-[8px]
+- TabsTrigger active: bg-[#3b6ef5] text-white rounded-[8px]
+
+### Skeleton Loaders
+- ALWAYS on async Supabase fetches — never blank state
+- bg-[#0f1522] border border-[#1f2d47] rounded-[14px] overflow-hidden relative
+- Shimmer: absolute inset-0 -translate-x-full animate-[shimmer_1.5s_infinite]
+  bg-gradient-to-r from-transparent via-white/[0.04] to-transparent
+
+### Match Score Ring (MatchScoreRing.tsx)
+- SVG donut: r=16, strokeWidth=3.5, circumference=100.53
+- Emerald ≥80, Amber 60-79, Rose <60
+- Track: #1a2438
+
+### Apply Drawer
+- Vaul bottom sheet only — never centered modal
+- bg-[#0f1522] border-t border-[#1f2d47] rounded-t-[20px]
+- Handle: w-9 h-1 bg-[#243352] mx-auto
+
+---
+
+## Components Built
+- src/layouts/RecruiterLayout.tsx             ✅ v2.0
+- src/layouts/CandidateLayout.tsx             ✅ v2.0
+- src/components/recruiter/MatchScoreRing.tsx ✅ v2.0
+- src/components/recruiter/ApplicantsTable.tsx ✅ v2.0
+- src/components/recruiter/CandidateSheet.tsx  ✅ v2.0
+- src/lib/commuteScoring.ts
+  Exports: calculateCommuteScore(), backfillCommuteScores()
+- src/lib/matchLogic.ts
+  Exports: calculateShiftMatch(), getMatchBreakdown()
+- src/types/index.ts
+  Exports: Candidate, Job, Application, Employer, Rating, ApplicationEvent
+
+---
+
+## Page Structure & Routes
+
+### Public
+| Page | File | Route | Status |
+|------|------|--------|--------|
+| Candidate Landing | src/pages/public/CandidateLanding.tsx | / | ✅ |
+| Recruiter Landing | src/pages/public/RecruiterLanding.tsx | /recruiters | ✅ |
+| Waitlist Confirmation | src/pages/shared/WaitlistConfirmation.tsx | /waitlist-confirmation | ✅ |
+
+### Candidate Flow
+| Page | File | Route | Status |
+|------|------|--------|--------|
+| Register | src/pages/candidate/Register.tsx | /candidate/register | ✅ v2.0 |
+| Verify Identity | src/pages/candidate/VerifyIdentity.tsx | /candidate/verify | ✅ v2.0 |
+| Shift Preferences | src/pages/candidate/ShiftPreferences.tsx | /candidate/shifts | ✅ v2.0 |
+| Profile Complete | src/pages/candidate/ProfileComplete.tsx | /candidate/profile-complete | ✅ v2.0 |
+| Job Board | src/pages/candidate/JobBoard.tsx | /candidate/jobs | ✅ v2.0 |
+
+### Recruiter Flow
+| Page | File | Route | Status |
+|------|------|--------|--------|
+| Login | src/pages/recruiter/Login.tsx | /recruiter/login | ⏳ needs v2.0 |
+| Post Job | src/pages/recruiter/PostJob.tsx | /recruiter/post-job | ✅ v2.0 |
+| Manage Applicants | src/pages/recruiter/ManageApplicants.tsx | /recruiter/applicants | ✅ v2.0 |
+| Candidate Profile | src/pages/recruiter/CandidateProfile.tsx | /recruiter/candidate/:id | ⏳ needs v2.0 |
+| Ratings | src/pages/recruiter/Ratings.tsx | /recruiter/ratings | ✅ v2.0 |
+
+### Shared
+| Page | File | Route | Status |
+|------|------|--------|--------|
+| Magic Link Handler | src/pages/shared/MagicLinkHandler.tsx | /auth/callback | ✅ |
+| Not Found | src/pages/shared/NotFound.tsx | * | ✅ |
+| Settings | src/pages/shared/Settings.tsx | /settings | ⏳ needs v2.0 |
+
+---
+
+## Coding Rules — ALWAYS FOLLOW THESE
+
+1. TypeScript only — no .jsx or .js files
+2. Tailwind v4 only — no tailwind.config.js, no inline styles
+3. Mobile-first — design for 390px first, scale up
+4. Thumb-friendly — 44px min tap targets, no hover-only interactions
+5. UK standards — £, miles, UK postcodes, DD/MM/YYYY, British English
+6. No passwords ever — Magic Link auth only
+7. Supabase client — always import from src/lib/supabase.ts
+8. Icons — lucide-react only
+9. Friction is the enemy — max 5 fields recruiters, max 3 fields candidates
+10. RLS always — every query scoped to correct user
+11. GDPR — consent language wherever data is collected
+12. Self-declared — RTW, NI, DBS always labelled clearly
+13. No CV required — entry-level roles apply without CV
+14. Skeleton loaders — all async fetches show skeletons, never blank
+15. Optimistic UI — status updates apply locally first, rollback on error
+16. Sheet not navigate — candidate review opens in Shadcn Sheet
+17. Never show full postcode — outward code only in UI
+18. No nested ternaries in JSX — extract into named functions above component
+19. No IIFEs in JSX — extract into named render functions instead
+20. tabular-nums on ALL numeric data
+21. Truth Engine colours are semantic — never decorative
+22. Postcode API calls — strip spaces: postcode.replace(/\s+/g, '')
+23. Design tokens — always use v2.0 tokens, never old (#0f1624 / #141f33 / #2a3a5c / #6b7fa3)
+24. Font — DM Sans for UI, DM Mono for numeric data
+
+---
+
+## UX Principles
+- Scannability over aesthetics — Pay, Location, Shift must be
+  highest contrast elements on job cards
+- Speed first — >5 fields for recruiters or >3 for candidates
+  means something is wrong
+- No ghosting — every action has a visible outcome
+- Truth Engine — show commute, skills match, RTW on job cards
+  when candidate is logged in, before they apply
+- Apply button always fully visible — never fade on hover
+- Bottom sheet for apply flow — never a centred modal on mobile
+
+---
+
+## Session Progress
+- Phase 1: ✅ COMPLETE — full end-to-end flow working
+- Session 1: ✅ COMPLETE — design system v2.0 established
+- Session 2: ✅ COMPLETE — all pages upgraded to v2.0 tokens
+
+## Session 3 TODO (next)
+1. Candidate application history page (new page)
+2. Ready to Work badge — progressive verification score (0-4)
+3. Fix Radix DialogTitle accessibility warning
+4. Wire calculateShiftMatch() into overall match score
+5. CandidateProfile.tsx — upgrade to v2.0 tokens
+6. Login.tsx — upgrade to v2.0 tokens
+7. Settings.tsx — upgrade to v2.0 tokens
+8. Vercel deploy to hirefast.uk
+
+---
+
+## Phase 2 Features (not yet built)
+1. Shift Pattern Matching — calculateShiftMatch() already built
+   in matchLogic.ts, ready to wire in
+2. Two-Way Ratings trigger — 48hrs after job closes
+   via Supabase Edge Function
+3. Ready to Work Badge — progressive verification (0-4 score)
+4. Candidate ratings page — rate recruiters after hire/rejection
+5. Bulk Re-Engagement — magic link interest checks for dormant applicants
+6. WhatsApp-Style Status Feed — SMS/push via Edge Functions + Twilio
