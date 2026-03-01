@@ -1,8 +1,9 @@
 import { cn } from "@/lib/utils";
 
 const HEIGHTS = { sm: 20, md: 28, lg: 40 } as const;
-const VIEWBOX_WIDTH = 200;
-const VIEWBOX_HEIGHT = 40;
+const TEXT_CLASS = { sm: "text-lg", md: "text-2xl", lg: "text-4xl" } as const;
+// Chevron path lives in 8,10 to 24,30 (width 16, height 20)
+const CHEVRON_VIEWBOX = "8 10 16 20";
 
 type HireFastLogoProps = {
   size?: "sm" | "md" | "lg";
@@ -11,41 +12,41 @@ type HireFastLogoProps = {
 
 /**
  * HireFast wordmark: chevron + "Hire" (#f0f4ff) + "Fast" (#3b6ef5).
- * Chevron height matches cap height of text; DM Sans bold.
+ * Wordmark is HTML text so DM Sans renders correctly.
  */
 export function HireFastLogo({ size = "md", className }: HireFastLogoProps) {
   const h = HEIGHTS[size];
-  const w = (VIEWBOX_WIDTH / VIEWBOX_HEIGHT) * h;
+  const chevronW = (16 / 20) * h;
 
   return (
-    <svg
-      width={w}
-      height={h}
-      viewBox={`0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`}
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className={cn("shrink-0", className)}
+    <div
+      className={cn("flex items-center gap-[0.35em]", className)}
       aria-hidden
     >
-      {/* Right-pointing chevron: two strokes meeting at point (like >), cap-height tall */}
-      <path
-        d="M 8 10 L 24 20 L 8 30"
+      <svg
+        width={chevronW}
+        height={h}
+        viewBox={CHEVRON_VIEWBOX}
         fill="none"
-        stroke="#3b6ef5"
-        strokeWidth="2.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <text
-        x={32}
-        y={28}
-        fontFamily="'DM Sans', sans-serif"
-        fontWeight={700}
-        fontSize={28}
-        letterSpacing="-0.02em"
+        xmlns="http://www.w3.org/2000/svg"
+        className="shrink-0"
       >
-        <tspan fill="#f0f4ff">Hire</tspan><tspan fill="#3b6ef5">Fast</tspan>
-      </text>
-    </svg>
+        <path
+          d="M 8 10 L 24 20 L 8 30"
+          fill="none"
+          stroke="#3b6ef5"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+      <span
+        className={cn("font-bold tracking-tight leading-none", TEXT_CLASS[size])}
+        style={{ fontFamily: "DM Sans, sans-serif" }}
+      >
+        <span style={{ color: "#f0f4ff" }}>Hire</span>
+        <span style={{ color: "#3b6ef5" }}>Fast</span>
+      </span>
+    </div>
   );
 }
