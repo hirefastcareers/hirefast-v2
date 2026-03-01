@@ -1,9 +1,9 @@
 # HireFast — Cursor Rules
-# Last updated: Session 3 complete — 01/03/2026
+# Last updated: Realtime, apply postcode, Post Job £, docs — 01/03/2026
 
 ---
 ## Agent Reminder
-Always read `HIREFAST_CONTEXT.md` at the start of a new session. The user may say "Read @HIREFAST_CONTEXT.md and @.cursorrules" — do this first before any other work.
+Always read `HIREFAST_CONTEXT.md` and `.cursorrules` at the start of a new session. These are the only project guides — do not treat other docs as authoritative unless the user explicitly references them.
 
 ---
 
@@ -34,8 +34,8 @@ Core value proposition: speed and zero friction.
 
 ---
 
-## Brand & Design Tokens v2.0
-DO NOT use old tokens (#0f1624, #141f33, #2a3a5c, #6b7fa3). Always use v2.0.
+## Design System (canonical plan)
+**Visual spec:** `docs/design-system.html` — open in browser for full reference. All UI must follow this spec. Summary below.
 
 ### Backgrounds
 - Page background:    #090d16   (bg-[#090d16])
@@ -59,13 +59,16 @@ DO NOT use old tokens (#0f1624, #141f33, #2a3a5c, #6b7fa3). Always use v2.0.
 - Hover:              #4d7ef6
 - Active:             #2d5ae0
 
-### Typography
+### Typography (type scale)
+- Display: 36px / 700 / -0.04em — hero headlines
+- H1: 26px / 700 / -0.03em — page titles
+- H2: 20px / 600 / -0.02em — card/section titles
+- Body: 14px / 400 — body text, line-height 1.6
+- Small: 12px / 500 — metadata, labels
+- Mono: DM Mono 12px — data, £, match %, postcodes, dates (always tabular-nums)
 - UI font: DM Sans (weights: 300, 400, 500, 600, 700)
-- Numeric/mono: DM Mono (weights: 400, 500)
-- ALL numeric data: font-mono tabular-nums
-- Headings: tracking-tight font-semibold text-white
+- Headings: tracking-tight font-semibold text-[#f0f4ff]
 - Metadata/labels: text-[#8494b4]
-- Data values: text-white tabular-nums
 
 ### Border Radius
 - Cards:        rounded-[14px]
@@ -285,13 +288,11 @@ Matching is case-insensitive exact string comparison.
 - Focus: focus:border-[#3b6ef5] focus:ring-1 focus:ring-[#3b6ef5]
 - Placeholder: placeholder:text-[#4d5f7a]
 
-### Buttons — Primary
-- bg-[#3b6ef5] hover:bg-[#4d7ef6] rounded-[10px] font-semibold
-- Mobile: active:scale-[0.98] transition
-
-### Buttons — Secondary
-- border border-[#1f2d47] bg-[#0f1522] text-[#8494b4] rounded-[10px]
-- Hover: hover:border-[#3b6ef5] hover:text-[#3b6ef5]
+### Buttons
+- Primary: bg-[#3b6ef5] hover:bg-[#4d7ef6] rounded-[10px] font-semibold. Mobile: active:scale-[0.98]
+- Secondary: border border-[#1f2d47] bg-[#0f1522] text-[#8494b4] rounded-[10px]; hover:border-[#3b6ef5] hover:text-[#3b6ef5]
+- Sizes: default 11px 20px 14px; sm 7px 14px 13px rounded-[8px]; lg 15px 28px 15px rounded-[12px]
+- Danger: bg-rose-500/10 text-rose-400 border-rose-500/25. Ghost: transparent, text-[#8494b4]
 
 ### Badges
 - Shortlisted: border-[#3b6ef5]/25 bg-[#3b6ef5]/10 text-[#3b6ef5] rounded-[6px]
@@ -322,7 +323,24 @@ Matching is case-insensitive exact string comparison.
 ### Apply Drawer
 - Vaul bottom sheet only — never centered modal
 - bg-[#0f1522] border-t border-[#1f2d47] rounded-t-[20px]
-- Handle: w-9 h-1 bg-[#243352] mx-auto
+- Handle: w-9 h-1 bg-[#243352] mx-auto (36px × 4px, rounded-full)
+
+### Step wizard (candidate onboarding)
+- Always show "Step X of 4". Progress is the emotional hook.
+- Step circle: 28px, border-2 border-[#243352], done = bg-[#3b6ef5] text-white, active = ring 4px bg-[#3b6ef5]/12
+- Connector line: 1px; done segment = bg-[#3b6ef5]
+
+### Toasts / notifications
+- bg-[#141d2e] border border-[#243352] rounded-[12px] padding, icon + title + subtitle
+- Success: icon bg-emerald-500/10 text-emerald-400. Info: bg-[#3b6ef5]/10 text-[#3b6ef5]
+
+### Empty states
+- Centred block: icon 52px rounded-[14px] bg-[#141d2e] border, title font-semibold, description text-[#8494b4], primary CTA button
+
+### Design principles crib (from design system)
+- Surfaces: bg #090d16, surface #0f1522, surface-2 #141d2e, border #1f2d47. No dot grids.
+- Brand: blue #3b6ef5; Truth Engine = semantic only (emerald/amber/rose).
+- DM Sans + DM Mono. Max 3 candidate fields, 5 recruiter. Skeleton on all async. Postcode outward only. RTW "(Self-declared)". Apply = Vaul bottom sheet. tabular-nums on all numeric. No Inter, no full postcode, no centred apply modal.
 
 ---
 
@@ -425,26 +443,59 @@ Matching is case-insensitive exact string comparison.
 
 ## Current Status
 - Phase 1: ✅ COMPLETE — full end-to-end flow working
-- Session 1: ✅ COMPLETE — design system v2.0 established
-- Session 2: ✅ COMPLETE — all pages upgraded to v2.0 tokens
-- Session 3: ✅ COMPLETE — Radix a11y, Applications page, shift match, RTW badge, Login/Settings/CandidateProfile v2.0, deployment live
+- Trust & comms (ratings, triggers, re-engagement, status-feed): ✅ COMPLETE
 - **Live:** https://www.hirefast.uk (Vercel + Supabase)
-- Realtime on applications; Post Job £ default; apply form full postcode; Applicants empty-state button primary blue
-
-## Session 3 — Completed
-1. ~~Fix Radix DialogTitle accessibility warning on apply sheet~~ ✅
-2. ~~Wire calculateShiftMatch() into match scoring~~ ✅
-3. ~~Candidate applications history page (/candidate/applications)~~ ✅
-4. ~~Ready to Work Badge — progressive verification (0-4 score)~~ ✅ (src/lib/rtwBadge.ts)
-5. ~~CandidateProfile.tsx — upgrade to v2.0 tokens~~ ✅
-6. ~~Login.tsx — upgrade to v2.0 tokens~~ ✅
-7. ~~Settings.tsx — upgrade to v2.0 tokens~~ ✅
-8. ~~Deploy to Vercel + hirefast.uk domain~~ ✅ Live at www.hirefast.uk
+- Next: work through Platform Roadmap below (Session 5 → 7, then Growth, then Scale).
 
 ---
 
-## Phase 2 Features
-1. ~~Candidate ratings page~~ ✅ (src/pages/candidate/Ratings.tsx, /candidate/ratings)
-2. ~~Two-Way Ratings trigger~~ ✅ (supabase/functions/ratings-trigger)
-3. ~~Bulk Re-Engagement~~ ✅ (supabase/functions/bulk-reengagement)
-4. ~~WhatsApp-Style Status Feed~~ ✅ (supabase/functions/status-feed-sms). Deploy: supabase/PHASE2_DEPLOY.md
+## Platform Roadmap (Claude — work through in order)
+
+### SESSION 3 — Polish & Complete Core ✅ DONE
+1. ~~Fix Radix DialogTitle accessibility warning on apply sheet~~ ✅
+2. ~~Wire calculateShiftMatch() into match scoring~~ ✅ (matchLogic.ts)
+3. ~~Upgrade to v2.0: Login, CandidateProfile, Settings~~ ✅
+4. ~~Candidate applications history (/candidate/applications) — list with status badges~~ ✅
+5. ~~Vercel deploy + hirefast.uk domain~~ ✅
+
+### SESSION 4 — Trust & Verification Layer ✅ DONE
+1. ~~Ready to Work Badge 0–4~~ ✅ (rtwBadge.ts: phone, RTW, NI, DBS; shield on profile + job cards)
+2. ~~Recruiters can see RTW on applicant row~~ ✅ (ApplicantsTable RTW badge)
+3. ~~Two-Way Ratings trigger~~ ✅ (Edge Function ratings-trigger, 48hrs after job close; magic link to rate)
+4. ☐ Recruiters filter applicants by RTW score (0–4) — not yet
+
+### SESSION 5 — Anti-Ghosting Engine
+1. ~~Interest Check~~ ✅ (CandidateSheet + CandidateProfile: "Interest Check" sends magic link; interest_status, interest_check_token)
+2. ~~Bulk Re-Engagement~~ ✅ (Edge Function bulk-reengagement, dormant applicants)
+3. ~~Application timeline in CandidateSheet History tab~~ ✅ (application_events with event_type, message, created_at)
+4. ☐ Show "Last contacted" on applicant table rows (last_contacted_at column)
+5. ☐ Highlight rows where candidate hasn't responded in 72hrs (amber)
+6. ☐ Bulk Re-Engagement UI: filter "No response in 48hrs", one-click send to selected, progress bar
+
+### SESSION 6 — Candidate Experience Upgrade
+1. ☐ Job match notifications — new job matching skills/location → magic link email (Edge Function or cron)
+2. ☐ Candidate dashboard: "Your best matches today" (top 3), "Applied" section, RTW score + tips to improve
+3. ☐ CV upload — optional, Supabase Storage; never required for entry-level
+
+### SESSION 7 — Recruiter Power Features
+1. ☐ Employer profile on job cards — company logo, description, sector (employers table + Settings exist; show on JobBoard cards)
+2. ☐ Job performance dashboard — per job: views, apply rate, drop-off, avg match score
+3. ☐ Auto-reject low matches — schema has auto_reject_low_matches; wire: match under 40% → auto-reject + polite email
+4. ☐ Bulk shortlist — select multiple applicants, shortlist all at once
+
+### GROWTH & MONETISATION (after core solid)
+- Pricing: Free (1 job, 10 applicants) / Pro £49/mo / Agency £149/mo
+- Recruiter landing: social proof, pricing table, "Post your first job free" CTA
+- Candidate SEO: /jobs/logistics/sheffield, /jobs/warehouse/manchester
+- Weekly digest for recruiters; candidate job alerts; recruiter leaderboard
+
+### SCALE (Phase 3)
+- WhatsApp/SMS opt-in (Twilio); multi-location jobs; agency multi-tenant; API for ATS; mobile app (React Native + Supabase)
+
+---
+
+## Trust & Comms (completed — previously "Phase 2")
+1. ~~Candidate ratings page~~ ✅ (/candidate/ratings)
+2. ~~ratings-trigger~~ ✅ (48hrs after job close)
+3. ~~bulk-reengagement~~ ✅ (dormant applicants)
+4. ~~status-feed-sms~~ ✅ (Twilio). Deploy: supabase/PHASE2_DEPLOY.md

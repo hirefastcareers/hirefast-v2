@@ -12,6 +12,28 @@ You can wire it up later if you decide to use Twilio or WhatsApp for messaging.
 
 ---
 
+## Deployment checklist (do in this order)
+
+| # | Step | Where | Done |
+|---|------|--------|------|
+| 0 | Run database updates (schema + RLS) | Supabase Dashboard → SQL Editor | ☐ |
+| 1 | Deploy Edge Functions | Terminal (Supabase CLI) | ☐ |
+| 2 | Add secret `HIREFAST_APP_URL` | Supabase Dashboard → Edge Functions → Secrets | ☐ |
+| 3 | Enable pg_cron + pg_net, Vault, then schedule jobs | Supabase Dashboard → SQL Editor | ☐ |
+
+---
+
+## 0. Database updates (run first)
+
+Before deploying functions, apply the Phase 2 schema and ratings RLS.
+
+1. In **Supabase Dashboard → SQL Editor**, run the contents of **`supabase/phase2_schema.sql`** (adds `closed_at`, `ratings_trigger_sent_at` on `jobs`, and `sms_sent_at` on `application_events`).
+2. In the same SQL Editor, run the contents of **`supabase/ratings_rls.sql`** (enables RLS on `ratings` and creates candidate/recruiter policies).
+
+If you get "policy already exists" errors on ratings, use the commented `DROP POLICY` lines in `ratings_rls.sql` once, then re-run the `CREATE POLICY` statements.
+
+---
+
 ## 1. Deploy the functions
 
 You can do this once and then forget about it.

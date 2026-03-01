@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HireFast — Design System & UI Specification</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #090d16;
+    --surface:   #0f1522;
+    --surface-2: #141d2e;
+    --surface-3: #1a2438;
+    --border:    #1f2d47;
+    --border-2:  #243352;
+    --blue:      #3b6ef5;
+    --blue-dim:  rgba(59,110,245,0.12);
+    --blue-glow: rgba(59,110,245,0.25);
+    --text-1:    #f0f4ff;
+    --text-2:    #8494b4;
+    --text-3:    #4d5f7a;
+    --emerald:   #34d399;
+    --emerald-bg:rgba(52,211,153,0.10);
+    --amber:     #fbbf24;
+    --amber-bg:  rgba(251,191,36,0.10);
+    --rose:      #fb7185;
+    --rose-bg:   rgba(251,113,133,0.10);
+    --r-card:  14px;
+    --r-input: 10px;
+    --r-badge: 6px;
+    font-family: 'DM Sans', system-ui, sans-serif;
+    font-size: 14px;
+    color: var(--text-1);
+    background: var(--bg);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); min-height: 100vh; }
+  .page { max-width: 1200px; margin: 0 auto; padding: 48px 24px; }
+  .section { margin-bottom: 80px; }
+  .section-label { font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--blue); margin-bottom: 8px; }
+  .section-title { font-size: 26px; font-weight: 700; color: var(--text-1); margin-bottom: 6px; letter-spacing: -0.02em; }
+  .section-desc { font-size: 14px; color: var(--text-2); margin-bottom: 32px; line-height: 1.6; max-width: 560px; }
+  .wordmark { font-size: 52px; font-weight: 700; letter-spacing: -0.04em; line-height: 1; }
+  .wordmark span { color: var(--blue); }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-card); padding: 20px; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-card); padding: 20px 22px; position: relative; overflow: hidden; }
+  .stat-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--blue-glow), transparent); }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-family: inherit; font-size: 14px; font-weight: 600; padding: 11px 20px; border-radius: 10px; border: 1px solid transparent; cursor: pointer; transition: all 0.15s ease; }
+  .btn-primary { background: var(--blue); color: #fff; }
+  .btn-primary:hover { background: #4d7ef6; }
+  .btn-secondary { background: var(--surface-2); color: var(--text-1); border-color: var(--border-2); }
+  .input { background: var(--surface-2); border: 1px solid var(--border-2); border-radius: var(--r-input); padding: 11px 14px; font-size: 14px; color: var(--text-1); outline: none; width: 100%; }
+  .input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px var(--blue-dim); }
+  .nav { background: rgba(9,13,22,0.85); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); padding: 0 24px; height: 56px; display: flex; align-items: center; justify-content: space-between; }
+  .badge { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 500; padding: 3px 9px; border-radius: var(--r-badge); border: 1px solid transparent; }
+  .badge-blue { background: var(--blue-dim); color: var(--blue); border-color: rgba(59,110,245,0.25); }
+  .badge-emerald { background: var(--emerald-bg); color: var(--emerald); border-color: rgba(52,211,153,0.25); }
+  .badge-amber { background: var(--amber-bg); color: var(--amber); border-color: rgba(251,191,36,0.25); }
+  .badge-rose { background: var(--rose-bg); color: var(--rose); border-color: rgba(251,113,133,0.25); }
+  .badge-ghost { background: var(--surface-3); color: var(--text-2); border-color: var(--border); }
+  .commute-pill { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 500; padding: 4px 10px; border-radius: 100px; border: 1px solid; font-variant-numeric: tabular-nums; }
+  .commute-low { background: var(--emerald-bg); color: var(--emerald); border-color: rgba(52,211,153,0.25); }
+  .commute-medium { background: var(--amber-bg); color: var(--amber); border-color: rgba(251,191,36,0.25); }
+  .commute-high { background: var(--rose-bg); color: var(--rose); border-color: rgba(251,113,133,0.25); }
+  .apply-drawer { background: var(--surface); border: 1px solid var(--border-2); border-radius: 20px 20px 0 0; padding: 20px; }
+  .drawer-handle { width: 36px; height: 4px; border-radius: 100px; background: var(--border-2); margin: 0 auto 20px; }
+  .step-bar { display: flex; align-items: center; gap: 0; margin-bottom: 28px; }
+  .step-circle { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--border-2); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--text-3); background: var(--surface); }
+  .step.done .step-circle { background: var(--blue); border-color: var(--blue); color: #fff; }
+  .step.active .step-circle { border-color: var(--blue); color: var(--blue); box-shadow: 0 0 0 4px var(--blue-dim); }
+  .skeleton { background: linear-gradient(90deg, var(--surface-2) 25%, var(--surface-3) 50%, var(--surface-2) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 6px; }
+  @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+  .glass-card { background: rgba(255,255,255,0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.07); border-radius: var(--r-card); padding: 20px; }
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div style="font-size:18px;font-weight:700;letter-spacing:-0.03em;color:var(--text-1)">Hire<span style="color:var(--blue)">Fast</span></div>
+  <div style="font-size:12px;color:var(--text-3)">Design System v2.0 — canonical reference</div>
+</nav>
+<div class="page">
+  <div class="section">
+    <div class="section-label">Design system reference</div>
+    <div class="section-title">Use this document as the plan</div>
+    <div class="section-desc">This HTML is the canonical visual spec for HireFast. All tokens, components, and patterns here are reflected in .cursorrules and HIREFAST_CONTEXT.md. Open this file in a browser to inspect the design system.</div>
+    <div class="card">
+      <div style="font-size:13px;font-weight:600;color:var(--text-1);margin-bottom:8px">Design principles crib (for Cursor)</div>
+      <pre style="font-size:11px;color:var(--text-2);line-height:1.6;overflow:auto">
+SURFACES: bg #090d16, surface #0f1522, surface-2 #141d2e, border #1f2d47
+BRAND: blue #3b6ef5 (primary), hover #4d7ef6
+TRUTH ENGINE (semantic only): emerald safe/match, amber warning, rose risk/reject
+TYPOGRAPHY: DM Sans (UI), DM Mono (data, £, match %, postcodes)
+RADII: card 14px, input/button 10px, badge 6px, pill 100px
+RULES: Max 3 candidate fields, 5 recruiter. Skeleton on all async. Postcode outward only. RTW "(Self-declared)". Apply = Vaul bottom sheet. tabular-nums on all numeric. No dot grids, no Inter, no full postcode, no centred apply modal.</pre>
+    </div>
+  </div>
+</div>
+</body>
+</html>

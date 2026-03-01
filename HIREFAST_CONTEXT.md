@@ -1,5 +1,5 @@
 # HireFast — Master Build Context
-## Last updated: Session 3 complete + live on hirefast.uk — 01/03/2026
+## Last updated: Realtime, apply postcode, Post Job £, docs — 01/03/2026
 
 ---
 
@@ -10,6 +10,8 @@
 
 The user may begin with: "Read @HIREFAST_CONTEXT.md and @.cursorrules before we start."  
 Always do this. Do not skip or assume prior context.
+
+**Project guides:** Use only `.cursorrules` and `HIREFAST_CONTEXT.md` when the user asks questions. Do not treat other docs (e.g. PHASE2_DEPLOY.md) as authoritative unless the user explicitly references them.
 
 ---
 
@@ -40,6 +42,9 @@ The core value proposition is speed and zero friction —
 - Hosting: Vercel (frontend) + Supabase (backend)
 
 ---
+
+## Design System (canonical plan)
+**Visual spec:** `docs/design-system.html` — open in browser. All UI must follow this spec.
 
 ## Brand & Design Tokens v2.0
 ⚠️ ALL new components must use v2.0 tokens. Old tokens are deprecated.
@@ -457,46 +462,74 @@ Matching is case-insensitive exact string comparison.
 25. Bottom sheet for apply — never a centred modal on mobile
 26. Design tokens — always v2.0, never old tokens
 
+### Design system patterns (from docs/design-system.html)
+- **Type scale:** Display 36px/700, H1 26px/700, H2 20px/600, Body 14px, Small 12px, Mono for data.
+- **Step wizard:** "Step X of 4" always; step circle 28px; done = blue fill, active = blue ring.
+- **Toasts:** surface-2, border-2, icon + title + subtitle; success = emerald, info = blue.
+- **Empty state:** 52px icon rounded-[14px], title, description, primary CTA.
+- **Principles crib:** Surfaces #090d16/#0f1522/#141d2e, border #1f2d47. Brand #3b6ef5. Truth Engine semantic only. DM Sans + DM Mono. Max 3/5 fields. Skeleton on async. Postcode outward only. RTW "(Self-declared)". Apply = Vaul sheet. tabular-nums. No dot grids, no Inter, no full postcode, no centred apply modal.
+
 ---
 
 ## Current Status
-- Phase 1: ✅ COMPLETE — full end-to-end flow working 28/02/2026
-- Session 1: ✅ COMPLETE — design system v2.0 established
-- Session 2: ✅ COMPLETE — all pages upgraded to v2.0 tokens
-- Session 3: ✅ Complete — Radix a11y, Applications page, shift match, RTW badge, Login/Settings/CandidateProfile v2.0, deployment live
+- Phase 1: ✅ COMPLETE — full end-to-end flow working
+- Trust & comms (ratings, triggers, re-engagement, status-feed): ✅ COMPLETE
 - **Live:** https://www.hirefast.uk (Vercel + Supabase)
-- Realtime: applications table in supabase_realtime; recruiter Applicants list auto-updates on new application
-- Post Job: pay rate field defaults to £. Apply form: full UK postcode input (e.g. S35 2YF). Applicants empty-state "Post a Job" button: primary blue (v2.0)
+- **Next:** Work through Platform Roadmap (Session 5 → 7, then Growth, then Scale).
 
 ---
 
-## Session 3 — Completed
-1. ~~Fix Radix DialogTitle accessibility warning on apply sheet~~ ✅
+## Platform Roadmap (work through in order)
+
+### SESSION 3 — Polish & Complete Core ✅ DONE
+1. ~~Fix Radix DialogTitle accessibility on apply sheet~~ ✅
 2. ~~Wire calculateShiftMatch() into match scoring~~ ✅
-3. ~~Candidate applications history page (/candidate/applications)~~ ✅
-4. ~~Ready to Work Badge — progressive verification (0-4 score)~~ ✅ (src/lib/rtwBadge.ts)
-5. ~~CandidateProfile.tsx — upgrade to v2.0 tokens~~ ✅
-6. ~~Login.tsx — upgrade to v2.0 tokens~~ ✅
-7. ~~Settings.tsx — upgrade to v2.0 tokens~~ ✅
-8. ~~Deploy to Vercel + hirefast.uk domain~~ ✅ Live at www.hirefast.uk
+3. ~~Upgrade to v2.0: Login, CandidateProfile, Settings~~ ✅
+4. ~~Candidate applications history (/candidate/applications)~~ ✅
+5. ~~Vercel deploy + hirefast.uk~~ ✅
+
+### SESSION 4 — Trust & Verification Layer ✅ DONE
+1. ~~Ready to Work Badge 0–4~~ ✅ (rtwBadge.ts; shield on profile + job cards)
+2. ~~Two-Way Ratings trigger~~ ✅ (ratings-trigger Edge Function)
+3. ☐ Recruiters filter applicants by RTW score (0–4)
+
+### SESSION 5 — Anti-Ghosting Engine
+1. ~~Interest Check~~ ✅ (CandidateSheet + CandidateProfile; magic link, interest_status)
+2. ~~Bulk Re-Engagement~~ ✅ (bulk-reengagement Edge Function)
+3. ~~Application timeline in CandidateSheet History tab~~ ✅ (application_events)
+4. ☐ Show "Last contacted" on applicant table rows
+5. ☐ Highlight rows where no response in 72hrs (amber)
+6. ☐ Bulk Re-Engagement UI: filter "No response 48hrs", one-click send selected, progress bar
+
+### SESSION 6 — Candidate Experience Upgrade
+1. ☐ Job match notifications (new job matches skills/location → magic link email)
+2. ☐ Candidate dashboard: "Best matches today" (top 3), "Applied" section, RTW score + tips
+3. ☐ CV upload optional (Supabase Storage; never required for entry-level)
+
+### SESSION 7 — Recruiter Power Features
+1. ☐ Employer profile on job cards (logo, description, sector; employers + Settings exist)
+2. ☐ Job performance dashboard (views, apply rate, drop-off, avg match score)
+3. ☐ Auto-reject low matches (auto_reject_low_matches in schema; wire match under 40% → reject + email)
+4. ☐ Bulk shortlist (select multiple, shortlist all)
+
+### GROWTH & MONETISATION
+- Pricing: Free / Pro £49/mo / Agency £149/mo
+- Recruiter landing: social proof, pricing, "Post first job free" CTA
+- Candidate SEO: /jobs/logistics/sheffield etc.
+- Weekly digest; job alerts; recruiter leaderboard
+
+### SCALE
+- WhatsApp/SMS opt-in; multi-location jobs; agency multi-tenant; API; mobile app
+
+---
+
+## Trust & Comms (completed)
+- Candidate ratings page ✅ | ratings-trigger ✅ | bulk-reengagement ✅ | status-feed-sms ✅  
+- Deploy: `supabase/PHASE2_DEPLOY.md`. Schema: `phase2_schema.sql`, `ratings_rls.sql`, `phase2_cron.sql`.
 
 ---
 
 ## Deployment (Vercel + hirefast.uk) — ✅ LIVE
-**Status:** Live at https://www.hirefast.uk. Frontend on Vercel, backend on Supabase.
-
-**Instructions must be simplified:** The project owner needs deployment steps that are beginner-friendly, step-by-step, and free of jargon. Break everything into numbered steps with screenshots or clear "click this, then that" guidance. Avoid assumptions about prior DevOps or CLI experience. When documenting deployment, write for someone who has not done this before.
-
-- **DEPLOYMENT.md** — Full step-by-step guide (GitHub → Vercel → Supabase → custom domain)
-- **vercel.json** — SPA routing (all routes serve index.html)
-- **.env.example** — Template for VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY
-
----
-
-## Phase 2 Features
-1. ~~Candidate ratings page~~ — rate recruiters after hire/rejection ✅ (src/pages/candidate/Ratings.tsx, /candidate/ratings)
-2. ~~Two-Way Ratings trigger~~ — Edge Function `ratings-trigger` runs daily; 48hrs after job closes sends magic links to candidates ✅
-3. ~~Bulk Re-Engagement~~ — Edge Function `bulk-reengagement` runs daily; sends magic links to dormant pending applicants (7+ days) ✅
-4. ~~WhatsApp-Style Status Feed~~ — Edge Function `status-feed-sms` runs every 15min; sends SMS via Twilio for shortlisted/rejected/interest events ✅
-
-Deploy: see `supabase/PHASE2_DEPLOY.md`. Schema: `supabase/phase2_schema.sql`. Cron: `supabase/phase2_cron.sql`.
+**Status:** https://www.hirefast.uk. Frontend Vercel, backend Supabase.
+- **DEPLOYMENT.md** — Step-by-step (GitHub → Vercel → Supabase → domain)
+- **vercel.json** — SPA routing. **.env.example** — VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY
