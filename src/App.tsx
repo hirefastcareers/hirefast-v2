@@ -12,6 +12,7 @@ import CandidateRatings from "@/pages/candidate/Ratings";
 import Login from "@/pages/recruiter/Login";
 import PostJob from "@/pages/recruiter/PostJob";
 import ManageApplicants from "@/pages/recruiter/ManageApplicants";
+import JobPerformance from "@/pages/recruiter/JobPerformance";
 import CandidateProfile from "@/pages/recruiter/CandidateProfile";
 import Ratings from "@/pages/recruiter/Ratings";
 import MagicLinkHandler from "@/pages/shared/MagicLinkHandler";
@@ -42,6 +43,7 @@ function App() {
           <Route path="login" element={<Login />} />
           <Route path="post-job" element={<PostJob />} />
           <Route path="applicants" element={<ManageApplicants />} />
+          <Route path="jobs" element={<JobPerformance />} />
           <Route path="candidate/:id" element={<CandidateProfile />} />
           <Route path="ratings" element={<Ratings />} />
         </Route>

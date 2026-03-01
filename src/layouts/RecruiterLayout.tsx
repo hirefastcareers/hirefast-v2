@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { Outlet, Link, useLocation } from "react-router-dom";
-import { PlusCircle, Users, Star, Settings2, Menu, X } from "lucide-react";
+import { PlusCircle, Users, BarChart3, Star, Settings2, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
   { to: "/recruiter/post-job", label: "Post Job", icon: PlusCircle },
   { to: "/recruiter/applicants", label: "Applicants", icon: Users },
+  { to: "/recruiter/jobs", label: "Job performance", icon: BarChart3 },
   { to: "/recruiter/ratings", label: "Ratings", icon: Star },
   { to: "/settings", label: "Settings", icon: Settings2 },
 ] as const;
@@ -50,7 +51,9 @@ export default function RecruiterLayout({
                   to === "/recruiter/applicants"
                     ? location.pathname === "/recruiter/applicants" ||
                       location.pathname.startsWith("/recruiter/candidate/")
-                    : location.pathname === to;
+                    : to === "/recruiter/jobs"
+                      ? location.pathname === "/recruiter/jobs"
+                      : location.pathname === to;
                 return (
                   <Link
                     key={to}
@@ -94,7 +97,9 @@ export default function RecruiterLayout({
                     to === "/recruiter/applicants"
                       ? location.pathname === "/recruiter/applicants" ||
                         location.pathname.startsWith("/recruiter/candidate/")
-                      : location.pathname === to;
+                      : to === "/recruiter/jobs"
+                        ? location.pathname === "/recruiter/jobs"
+                        : location.pathname === to;
                   return (
                     <li key={to}>
                       <Link

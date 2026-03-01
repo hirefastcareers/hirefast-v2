@@ -5,6 +5,8 @@
 ## Agent Reminder
 Always read `HIREFAST_CONTEXT.md` and `.cursorrules` at the start of a new session. These are the only project guides — do not treat other docs as authoritative unless the user explicitly references them.
 
+**Project owner is a beginner:** They are new to Cursor and Supabase. Explain steps simply, avoid jargon, use numbered “click this then that” instructions. You are the lead developer: recommend next steps, choose the simplest approach, and do in code what you can; only hand off to them for things that must be done in the Dashboard or terminal.
+
 ---
 
 ## What is HireFast?
@@ -445,7 +447,7 @@ Matching is case-insensitive exact string comparison.
 - Phase 1: ✅ COMPLETE — full end-to-end flow working
 - Trust & comms (ratings, triggers, re-engagement, status-feed): ✅ COMPLETE
 - **Live:** https://www.hirefast.uk (Vercel + Supabase)
-- Next: work through Platform Roadmap below (Session 5 → 7, then Growth, then Scale).
+- Next: Session 7 (Recruiter Power Features) → Growth → Scale.
 
 ---
 
@@ -462,20 +464,20 @@ Matching is case-insensitive exact string comparison.
 1. ~~Ready to Work Badge 0–4~~ ✅ (rtwBadge.ts: phone, RTW, NI, DBS; shield on profile + job cards)
 2. ~~Recruiters can see RTW on applicant row~~ ✅ (ApplicantsTable RTW badge)
 3. ~~Two-Way Ratings trigger~~ ✅ (Edge Function ratings-trigger, 48hrs after job close; magic link to rate)
-4. ☐ Recruiters filter applicants by RTW score (0–4) — not yet
+4. ~~Recruiters filter applicants by RTW score (0–4)~~ ✅ (ManageApplicants: RTW dropdown 4/4, 3+, 2+, 1+, 0)
 
-### SESSION 5 — Anti-Ghosting Engine
+### SESSION 5 — Anti-Ghosting Engine ✅ DONE
 1. ~~Interest Check~~ ✅ (CandidateSheet + CandidateProfile: "Interest Check" sends magic link; interest_status, interest_check_token)
 2. ~~Bulk Re-Engagement~~ ✅ (Edge Function bulk-reengagement, dormant applicants)
 3. ~~Application timeline in CandidateSheet History tab~~ ✅ (application_events with event_type, message, created_at)
-4. ☐ Show "Last contacted" on applicant table rows (last_contacted_at column)
-5. ☐ Highlight rows where candidate hasn't responded in 72hrs (amber)
-6. ☐ Bulk Re-Engagement UI: filter "No response in 48hrs", one-click send to selected, progress bar
+4. ~~Show "Last contacted" on applicant table rows~~ ✅ (ApplicantsTable column last_contacted_at)
+5. ~~Highlight rows where candidate hasn't responded in 72hrs (amber)~~ ✅ (ApplicantsTable row highlight)
+6. ~~Bulk Re-Engagement UI~~ ✅ (filter "No response 48h", checkboxes, "Send interest check to N", progress bar)
 
-### SESSION 6 — Candidate Experience Upgrade
-1. ☐ Job match notifications — new job matching skills/location → magic link email (Edge Function or cron)
-2. ☐ Candidate dashboard: "Your best matches today" (top 3), "Applied" section, RTW score + tips to improve
-3. ☐ CV upload — optional, Supabase Storage; never required for entry-level
+### SESSION 6 — Candidate Experience Upgrade ✅ DONE
+1. ~~Job match notifications~~ ✅ (Edge Function `job-match-notify`: post job_id or cron; matches by postcode outward, sends magic link to /candidate/jobs)
+2. ~~Candidate dashboard~~ ✅ (JobBoard when logged in: "Your best matches today" top 3, "Applied" last 3, RTW score + tips + link to Settings)
+3. ~~CV upload~~ ✅ (Settings in candidate mode: optional upload to Storage bucket `cvs`; update candidates.cv_url. Never required for apply.)
 
 ### SESSION 7 — Recruiter Power Features
 1. ☐ Employer profile on job cards — company logo, description, sector (employers table + Settings exist; show on JobBoard cards)

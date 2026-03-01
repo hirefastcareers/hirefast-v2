@@ -7,7 +7,7 @@ import {
   useReactTable,
   flexRender,
 } from "@tanstack/react-table";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { Link } from "react-router-dom";
 import {
   Phone,
@@ -36,6 +36,7 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import MatchScoreRing from "@/components/recruiter/MatchScoreRing";
+import { getRtwScore, getRtwBadgeLabel, getRtwBadgeClass } from "@/lib/rtwBadge";
 
 export type JobRow = {
   id: string;
@@ -43,6 +44,12 @@ export type JobRow = {
   location_name: string | null;
   sector: string | null;
 };
+
+export type CandidateRtwRow = {
+  rtw_verified: boolean | null;
+  ni_confirmed: boolean | null;
+  dbs_status: string | null;
+} | null;
 
 export type ApplicationRow = {
   id: string;
@@ -62,7 +69,9 @@ export type ApplicationRow = {
   has_rtw: boolean | null;
   created_at: string;
   shortlisted_at: string | null;
+  last_contacted_at?: string | null;
   jobs: JobRow | null;
+  candidates?: CandidateRtwRow;
 };
 
 function formatDate(iso: string): string {
@@ -104,8 +113,31 @@ function CommuteRiskPill({ level }: { level: string | null }) {
   );
 }
 
-/** Truth Engine: RTW status — Strong (emerald) / Weak (rose). */
-function RTWBadge({ hasRtw }: { hasRtw: boolean | null }) {
+/** Truth Engine: RTW status — score 0–4 when candidate data present, else has_rtw only. */
+function RTWBadge({
+  hasRtw,
+  candidates,
+}: {
+  hasRtw: boolean | null;
+  candidates: CandidateRtwRow;
+}) {
+  const score = candidates
+    ? getRtwScore({
+        has_rtw: hasRtw,
+        rtw_verified: candidates.rtw_verified,
+        ni_confirmed: candidates.ni_confirmed,
+        dbs_status: candidates.dbs_status,
+      })
+    : null;
+  if (score !== null) {
+    const label = getRtwBadgeLabel(score);
+    const cls = getRtwBadgeClass(score);
+    return (
+      <Badge variant="secondary" className={cn("rounded-[6px] border", cls)}>
+        {label}
+      </Badge>
+    );
+  }
   if (hasRtw === true) {
     return (
       <Badge variant="default" className="border border-emerald-500/25 bg-emerald-500/10 text-emerald-400 rounded-[6px]">
@@ -150,11 +182,23 @@ function StatusBadge({ status }: { status: string }) {
   );
 }
 
+const HRS_72_MS = 72 * 60 * 60 * 1000;
+
+function isNoResponse72hrs(row: ApplicationRow): boolean {
+  if (row.status === "rejected") return false;
+  const ref = row.last_contacted_at ?? row.created_at;
+  const refTime = new Date(ref).getTime();
+  return Date.now() - refTime > HRS_72_MS;
+}
+
 type ApplicantsTableProps = {
   applications: ApplicationRow[];
   onSelectApplication: (applicationId: string) => void;
   onShortlist: (applicationId: string) => void;
   onReject: (applicationId: string) => void;
+  /** When set, show checkboxes and call onSelectionChange when selection changes. */
+  selectedIds?: Set<string>;
+  onSelectionChange?: (ids: Set<string>) => void;
 };
 
 export function ApplicantsTable({
@@ -162,13 +206,44 @@ export function ApplicantsTable({
   onSelectApplication,
   onShortlist,
   onReject,
+  selectedIds,
+  onSelectionChange,
 }: ApplicantsTableProps) {
   const [sorting, setSorting] = useState<SortingState>([
     { id: "match_score", desc: true },
   ]);
 
+  const toggleSelection = useCallback(
+    (id: string) => {
+      if (!onSelectionChange) return;
+      const next = new Set(selectedIds ?? []);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      onSelectionChange(next);
+    },
+    [onSelectionChange, selectedIds]
+  );
+
   const columns = useMemo<ColumnDef<ApplicationRow>[]>(
     () => [
+      ...(onSelectionChange
+        ? [
+            {
+              id: "select",
+              header: "Select",
+              cell: ({ row }: { row: { original: ApplicationRow } }) => (
+                <input
+                  type="checkbox"
+                  className="h-4 w-4 rounded border-[#1f2d47] bg-[#141d2e] text-[#3b6ef5] focus:ring-[#3b6ef5]"
+                  checked={selectedIds?.has(row.original.id) ?? false}
+                  onChange={() => toggleSelection(row.original.id)}
+                  onClick={(e) => e.stopPropagation()}
+                />
+              ),
+              enableSorting: false,
+            } as ColumnDef<ApplicationRow>,
+          ]
+        : []),
       {
         accessorKey: "full_name",
         id: "name",
@@ -226,7 +301,32 @@ export function ApplicantsTable({
         id: "rtw",
         header: "RTW",
         enableSorting: false,
-        cell: ({ row }) => <RTWBadge hasRtw={row.original.has_rtw} />,
+        cell: ({ row }) => (
+          <RTWBadge hasRtw={row.original.has_rtw} candidates={row.original.candidates ?? null} />
+        ),
+      },
+      {
+        accessorKey: "last_contacted_at",
+        id: "last_contacted",
+        header: "Last contacted",
+        enableSorting: true,
+        cell: ({ row }) => {
+          const at = row.original.last_contacted_at;
+          return (
+            <span className="text-sm tabular-nums text-[#8494b4]">
+              {at ? formatDate(at) : "—"}
+            </span>
+          );
+        },
+        sortingFn: (rowA, rowB) => {
+          const a = rowA.original.last_contacted_at
+            ? new Date(rowA.original.last_contacted_at).getTime()
+            : 0;
+          const b = rowB.original.last_contacted_at
+            ? new Date(rowB.original.last_contacted_at).getTime()
+            : 0;
+          return a - b;
+        },
       },
       {
         accessorKey: "status",
@@ -241,7 +341,7 @@ export function ApplicantsTable({
         header: "Applied",
         enableSorting: true,
         cell: ({ row }) => (
-          <span className="text-sm tabular-nums text-[#6b7fa3]">
+          <span className="text-sm tabular-nums text-[#8494b4]">
             {formatDate(row.original.created_at)}
           </span>
         ),
@@ -262,7 +362,7 @@ export function ApplicantsTable({
                   <TooltipTrigger asChild>
                     <a
                       href={`tel:${app.phone.replace(/\s/g, "")}`}
-                      className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-[#6b7fa3] hover:bg-[#1a2438] hover:text-white"
+                      className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-[#8494b4] hover:bg-[#1a2438] hover:text-white"
                     >
                       <Phone className="h-4 w-4" />
                     </a>
@@ -276,7 +376,7 @@ export function ApplicantsTable({
                     type="button"
                     onClick={() => onShortlist(app.id)}
                     disabled={app.status === "shortlisted"}
-                    className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-[#6b7fa3] hover:bg-[#1a2438] hover:text-white disabled:opacity-50"
+                    className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-[#8494b4] hover:bg-[#1a2438] hover:text-white disabled:opacity-50"
                   >
                     <UserCheck className="h-4 w-4" />
                   </button>
@@ -289,7 +389,7 @@ export function ApplicantsTable({
                     type="button"
                     onClick={() => onReject(app.id)}
                     disabled={app.status === "rejected"}
-                    className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-[#6b7fa3] hover:bg-[#1a2438] hover:text-rose-400 disabled:opacity-50"
+                    className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-[#8494b4] hover:bg-[#1a2438] hover:text-rose-400 disabled:opacity-50"
                   >
                     <X className="h-4 w-4" />
                   </button>
@@ -301,9 +401,9 @@ export function ApplicantsTable({
                   <button
                     type="button"
                     onClick={() => onSelectApplication(app.id)}
-                    className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-[#6b7fa3] hover:bg-[#1a2438] hover:text-white"
-                  >
-                    <ChevronRight className="h-4 w-4" />
+className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-[#8494b4] hover:bg-[#1a2438] hover:text-white"
+                    >
+                      <ChevronRight className="h-4 w-4" />
                   </button>
                 </TooltipTrigger>
                 <TooltipContent>View profile</TooltipContent>
@@ -313,7 +413,7 @@ export function ApplicantsTable({
         },
       },
     ],
-    [onSelectApplication, onShortlist, onReject]
+    [onSelectApplication, onShortlist, onReject, onSelectionChange, selectedIds, toggleSelection]
   );
 
   const table = useReactTable({
@@ -341,7 +441,7 @@ export function ApplicantsTable({
     return (
       <div className="rounded-[14px] border border-[#1f2d47] bg-[#0f1522] p-12 flex flex-col items-center justify-center text-center">
         <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#1a2438] mb-4">
-          <Inbox className="h-8 w-8 text-[#6b7fa3]" />
+          <Inbox className="h-8 w-8 text-[#8494b4]" />
         </div>
         <h2 className="text-lg font-semibold text-white">No applicants yet</h2>
         <p className="mt-2 text-sm text-[#8494b4]">
@@ -391,10 +491,17 @@ export function ApplicantsTable({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows.map((row) => (
+            {table.getRowModel().rows.map((row) => {
+              const noResponse72 = isNoResponse72hrs(row.original);
+              return (
               <TableRow
                 key={row.id}
-                className="bg-[#0f1522] hover:bg-[#141d2e] transition-colors cursor-pointer border-b border-[#1f2d47]"
+                className={cn(
+                  "transition-colors cursor-pointer border-b border-[#1f2d47]",
+                  noResponse72
+                    ? "bg-amber-500/5 hover:bg-amber-500/10 border-l-2 border-l-amber-500/50"
+                    : "bg-[#0f1522] hover:bg-[#141d2e]"
+                )}
                 onClick={() => onSelectApplication(row.original.id)}
               >
                 {row.getVisibleCells().map((cell) => (
@@ -403,10 +510,11 @@ export function ApplicantsTable({
                     className="border-[#1f2d47] text-white"
                   >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
+                </TableCell>
+              ))}
               </TableRow>
-            ))}
+              );
+            })}
           </TableBody>
         </Table>
       </div>

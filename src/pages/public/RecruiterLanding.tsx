@@ -55,7 +55,7 @@ export default function RecruiterLanding() {
             to="/recruiter/login"
             className="inline-flex justify-center items-center py-4 px-8 rounded-xl font-semibold text-white bg-[#3b6ef5] hover:opacity-90 active:scale-[0.98] transition-all text-lg"
           >
-            Start Hiring Free
+            Post your first job free
           </Link>
           <a
             href="#how-it-works"
@@ -139,7 +139,7 @@ export default function RecruiterLanding() {
             </h3>
             <p className="text-[#6b7fa3] text-sm">
               For warehouse, logistics and production roles — candidates apply
-              in 15 seconds. You get what matters.
+              in 30 seconds. You get what matters.
             </p>
           </div>
           <div className="rounded-xl border-2 border-[#3b6ef5]/50 bg-[#141f33] p-5 text-left">
@@ -238,42 +238,75 @@ export default function RecruiterLanding() {
         </div>
       </section>
 
-      {/* 7. Pricing Teaser */}
+      {/* 7. Pricing */}
       <section className="pb-16">
         <h2 className="text-2xl font-bold text-center mb-8 md:text-3xl">
           Simple, transparent pricing
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
-          <div className="rounded-xl border border-[#2a3a5c] bg-[#141f33] p-6 text-left relative">
-            <span className="absolute top-4 right-4 text-xs font-medium text-[#6b7fa3] bg-[#0f1624] px-2 py-1 rounded">
-              Coming soon
+        <p className="text-[#6b7fa3] text-center mb-10 max-w-xl mx-auto">
+          No per-job fees. One flat price. Built for UK volume hiring.
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          <div className="rounded-xl border-2 border-[#3b6ef5] bg-[#141f33] p-6 text-left relative">
+            <span className="absolute top-4 right-4 text-xs font-medium text-[#3b6ef5] bg-[#3b6ef5]/20 px-2 py-1 rounded">
+              Start here
             </span>
             <div className="w-10 h-10 rounded-lg bg-[#3b6ef5]/20 flex items-center justify-center mb-4">
               <CreditCard className="w-5 h-5 text-[#3b6ef5]" />
             </div>
-            <h3 className="font-semibold text-white text-xl mb-2">Free</h3>
+            <h3 className="font-semibold text-white text-xl mb-1">Free</h3>
+            <p className="text-[#3b6ef5] font-bold text-2xl mb-4">£0</p>
             <ul className="text-[#6b7fa3] text-sm space-y-2">
-              <li>Post up to 3 jobs</li>
-              <li>Basic candidate matching</li>
-              <li>Email support</li>
+              <li>1 active job</li>
+              <li>30-second apply flow for candidates</li>
+              <li>Commute & match scoring</li>
+              <li>Applicant management</li>
             </ul>
+            <Link
+              to="/recruiter/login"
+              className="mt-6 inline-flex justify-center w-full py-3 px-4 rounded-xl font-semibold text-white bg-[#3b6ef5] hover:opacity-90 active:scale-[0.98] transition-all"
+            >
+              Post your first job free
+            </Link>
           </div>
-          <div className="rounded-xl border-2 border-[#3b6ef5] bg-[#141f33] p-6 text-left relative">
-            <span className="absolute top-4 right-4 text-xs font-medium text-[#3b6ef5] bg-[#3b6ef5]/20 px-2 py-1 rounded">
-              Coming soon
-            </span>
+          <div className="rounded-xl border border-[#2a3a5c] bg-[#141f33] p-6 text-left">
             <div className="w-10 h-10 rounded-lg bg-[#3b6ef5]/20 flex items-center justify-center mb-4">
               <Sparkles className="w-5 h-5 text-[#3b6ef5]" />
             </div>
-            <h3 className="font-semibold text-white text-xl mb-2">Pro</h3>
-            <p className="text-[#3b6ef5] font-bold text-lg mb-3">£99/month</p>
+            <h3 className="font-semibold text-white text-xl mb-1">Pro</h3>
+            <p className="text-white font-bold text-2xl mb-4 tabular-nums">£49<span className="text-[#6b7fa3] font-normal text-base">/mo</span></p>
             <ul className="text-[#6b7fa3] text-sm space-y-2">
-              <li>Unlimited jobs</li>
-              <li>AI match scoring</li>
-              <li>Commute risk scoring</li>
-              <li>Anti-ghosting engine</li>
+              <li>5–10 active jobs</li>
+              <li>Job performance dashboard</li>
+              <li>Auto-reject low matches</li>
+              <li>Bulk shortlist & re-engagement</li>
               <li>Priority support</li>
             </ul>
+            <Link
+              to="/recruiter/login"
+              className="mt-6 inline-flex justify-center w-full py-3 px-4 rounded-xl font-semibold text-[#3b6ef5] border-2 border-[#3b6ef5] hover:bg-[#3b6ef5]/10 transition-all"
+            >
+              Get Pro
+            </Link>
+          </div>
+          <div className="rounded-xl border border-[#2a3a5c] bg-[#141f33] p-6 text-left">
+            <div className="w-10 h-10 rounded-lg bg-[#3b6ef5]/20 flex items-center justify-center mb-4">
+              <Users className="w-5 h-5 text-[#3b6ef5]" />
+            </div>
+            <h3 className="font-semibold text-white text-xl mb-1">Agency</h3>
+            <p className="text-white font-bold text-2xl mb-4 tabular-nums">£149<span className="text-[#6b7fa3] font-normal text-base">/mo</span></p>
+            <ul className="text-[#6b7fa3] text-sm space-y-2">
+              <li>25+ active jobs</li>
+              <li>Multi-recruiter & branding</li>
+              <li>Everything in Pro</li>
+              <li>Dedicated support</li>
+            </ul>
+            <Link
+              to="/recruiter/login"
+              className="mt-6 inline-flex justify-center w-full py-3 px-4 rounded-xl font-semibold text-[#8494b4] border border-[#2a3a5c] hover:border-[#3b6ef5] hover:text-[#3b6ef5] transition-all"
+            >
+              Contact for Agency
+            </Link>
           </div>
         </div>
       </section>
@@ -282,16 +315,16 @@ export default function RecruiterLanding() {
       <section className="py-16">
         <div className="max-w-3xl mx-auto rounded-2xl border border-[#2a3a5c] bg-gradient-to-br from-[#0f1624] to-[#1a2744] p-8 md:p-12 text-center">
           <h2 className="text-2xl font-bold mb-3 md:text-3xl">
-            Ready to hire faster?
+            Post your first job free
           </h2>
           <p className="text-[#6b7fa3] mb-8 max-w-lg mx-auto">
-            Join recruiters already on the waitlist. No credit card required.
+            No credit card required. Candidates apply in 30 seconds. You get matched, verified applicants.
           </p>
           <Link
             to="/recruiter/login"
             className="inline-flex justify-center items-center py-4 px-8 rounded-xl font-semibold text-white bg-[#3b6ef5] hover:opacity-90 active:scale-[0.98] transition-all text-lg"
           >
-            Get Early Access
+            Post your first job free
           </Link>
         </div>
       </section>

@@ -8,17 +8,28 @@ import {
   CircleDot,
   ChevronDown,
   Briefcase,
+  Send,
 } from "lucide-react";
 import { Sheet } from "@/components/ui/sheet";
 import { supabase } from "@/lib/supabase";
 import { backfillCommuteScores } from "@/lib/commuteScoring";
+import { getRtwScore } from "@/lib/rtwBadge";
 import RecruiterLayout from "@/layouts/RecruiterLayout";
 import { ApplicantsTable, type ApplicationRow, type JobRow } from "@/components/recruiter/ApplicantsTable";
 import { CandidateSheet } from "@/components/recruiter/CandidateSheet";
 
+const APPLICATIONS_SELECT = `
+  id, job_id, employer_id, candidate_id, full_name, email, phone,
+  candidate_postcode, commute_distance_miles, commute_risk_level, journey_time_mins,
+  match_score, status, outcome, has_rtw, created_at, shortlisted_at, last_contacted_at,
+  jobs ( id, title, location_name, sector ),
+  candidates ( rtw_verified, ni_confirmed, dbs_status )
+`;
+
 type SortOption = "match" | "recent" | "name";
 type RiskFilter = "all" | "low" | "medium" | "high";
 type StatusFilter = "all" | "pending" | "shortlisted" | "rejected";
+type RtwFilter = "all" | "4" | "3" | "2" | "1" | "0";
 
 function SkeletonCard() {
   return (
@@ -51,8 +62,12 @@ export default function ManageApplicants() {
   const [filterJob, setFilterJob] = useState<string>("all");
   const [filterStatus, setFilterStatus] = useState<StatusFilter>("all");
   const [filterRisk, setFilterRisk] = useState<RiskFilter>("all");
+  const [filterRtw, setFilterRtw] = useState<RtwFilter>("all");
+  const [filterNoResponse48, setFilterNoResponse48] = useState<boolean>(false);
   const [sortBy, setSortBy] = useState<SortOption>("match");
   const [selectedApplicationId, setSelectedApplicationId] = useState<string | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [bulkProgress, setBulkProgress] = useState<{ current: number; total: number } | null>(null);
 
   const showToast = useCallback((message: string) => {
     setToast(message);
@@ -102,28 +117,7 @@ export default function ManageApplicants() {
 
       const { data: appsData, error: appsError } = await supabase
         .from("applications")
-        .select(
-          `
-          id,
-          job_id,
-          employer_id,
-          candidate_id,
-          full_name,
-          email,
-          phone,
-          candidate_postcode,
-          commute_distance_miles,
-          commute_risk_level,
-          journey_time_mins,
-          match_score,
-          status,
-          outcome,
-          has_rtw,
-          created_at,
-          shortlisted_at,
-          jobs ( id, title, location_name, sector )
-        `
-        )
+        .select(APPLICATIONS_SELECT)
         .eq("employer_id", recruiterEmployer.employer_id)
         .order("match_score", { ascending: false });
 
@@ -146,9 +140,7 @@ export default function ManageApplicants() {
             if (cancelled) return;
             supabase
               .from("applications")
-              .select(
-                "id, job_id, employer_id, candidate_id, full_name, email, phone, candidate_postcode, commute_distance_miles, commute_risk_level, journey_time_mins, match_score, status, outcome, has_rtw, created_at, shortlisted_at, jobs(id, title, location_name, sector)"
-              )
+              .select(APPLICATIONS_SELECT)
               .eq("employer_id", recruiterEmployer.employer_id)
               .order("match_score", { ascending: false })
               .then(({ data }) => {
@@ -182,9 +174,7 @@ export default function ManageApplicants() {
         () => {
           supabase
             .from("applications")
-            .select(
-              "id, job_id, employer_id, candidate_id, full_name, email, phone, candidate_postcode, commute_distance_miles, commute_risk_level, journey_time_mins, match_score, status, outcome, has_rtw, created_at, shortlisted_at, jobs(id, title, location_name, sector)"
-            )
+            .select(APPLICATIONS_SELECT)
             .eq("employer_id", employerId)
             .order("match_score", { ascending: false })
             .then(({ data }) => {
@@ -199,6 +189,7 @@ export default function ManageApplicants() {
     };
   }, [employerId]);
 
+  const HRS_48_MS = 48 * 60 * 60 * 1000;
   const filteredAndSorted = applications
     .filter((a) => {
       if (filterJob !== "all" && a.job_id !== filterJob) return false;
@@ -208,6 +199,21 @@ export default function ManageApplicants() {
         if (filterRisk === "low" && level !== "low") return false;
         if (filterRisk === "medium" && level !== "medium") return false;
         if (filterRisk === "high" && level !== "high") return false;
+      }
+      if (filterRtw !== "all") {
+        const score = getRtwScore({
+          has_rtw: a.has_rtw,
+          rtw_verified: a.candidates?.rtw_verified,
+          ni_confirmed: a.candidates?.ni_confirmed,
+          dbs_status: a.candidates?.dbs_status,
+        });
+        const min = parseInt(filterRtw, 10);
+        if (min === 0 ? score !== 0 : score < min) return false;
+      }
+      if (filterNoResponse48) {
+        if (a.status === "rejected") return false;
+        const ref = a.last_contacted_at ?? a.created_at;
+        if (Date.now() - new Date(ref).getTime() <= HRS_48_MS) return false;
       }
       return true;
     })
@@ -235,6 +241,71 @@ export default function ManageApplicants() {
           applications.reduce((s, a) => s + (a.match_score ?? 0), 0) / applications.length
         )
       : 0;
+
+  const sendBulkInterestCheck = useCallback(async () => {
+    if (!employerId || selectedIds.size === 0) return;
+    const ids = Array.from(selectedIds);
+    setBulkProgress({ current: 0, total: ids.length });
+    const now = new Date().toISOString();
+    for (let i = 0; i < ids.length; i++) {
+      const id = ids[i];
+      const token = crypto.randomUUID();
+      await supabase
+        .from("applications")
+        .update({
+          interest_check_token: token,
+          interest_check_sent_at: now,
+          last_contacted_at: now,
+        })
+        .eq("id", id)
+        .eq("employer_id", employerId);
+      await supabase.from("application_events").insert({
+        application_id: id,
+        event_type: "interest_check_sent",
+        message: "Interest check sent",
+      });
+      setBulkProgress({ current: i + 1, total: ids.length });
+    }
+    setSelectedIds(new Set());
+    setBulkProgress(null);
+    showToast(`Interest check sent to ${ids.length} applicant${ids.length === 1 ? "" : "s"}.`);
+    // Refetch to update last_contacted_at in table
+    const { data } = await supabase
+      .from("applications")
+      .select(APPLICATIONS_SELECT)
+      .eq("employer_id", employerId)
+      .order("match_score", { ascending: false });
+    if (data) setApplications(data as unknown as ApplicationRow[]);
+  }, [employerId, selectedIds, showToast]);
+
+  const bulkShortlist = useCallback(async () => {
+    if (!employerId || selectedIds.size === 0) return;
+    const ids = Array.from(selectedIds);
+    const now = new Date().toISOString();
+    for (const id of ids) {
+      await supabase
+        .from("applications")
+        .update({
+          status: "shortlisted",
+          shortlisted_at: now,
+        })
+        .eq("id", id)
+        .eq("employer_id", employerId);
+      await supabase.from("application_events").insert({
+        application_id: id,
+        event_type: "shortlisted",
+        message: "Shortlisted",
+      });
+    }
+    setSelectedIds(new Set());
+    showToast(`${ids.length} applicant${ids.length === 1 ? "" : "s"} shortlisted.`);
+    const { data } = await supabase
+      .from("applications")
+      .select(APPLICATIONS_SELECT)
+      .eq("employer_id", employerId)
+      .order("match_score", { ascending: false });
+    if (data) setApplications(data as unknown as ApplicationRow[]);
+  }, [employerId, selectedIds, showToast]);
 
   const updateStatus = useCallback(
     async (applicationId: string, newStatus: "shortlisted" | "rejected") => {
@@ -340,6 +411,27 @@ export default function ManageApplicants() {
               <option value="medium">Warning</option>
               <option value="high">High Risk</option>
             </select>
+            <select
+              value={filterRtw}
+              onChange={(e) => setFilterRtw(e.target.value as RtwFilter)}
+              className="rounded-[10px] border border-[#1f2d47] bg-[#0f1522] px-3 py-2 text-sm text-white focus:border-[#3b6ef5] focus:outline-none"
+            >
+              <option value="all">RTW: All</option>
+              <option value="4">RTW 4/4</option>
+              <option value="3">RTW 3+</option>
+              <option value="2">RTW 2+</option>
+              <option value="1">RTW 1+</option>
+              <option value="0">RTW 0</option>
+            </select>
+            <label className="flex items-center gap-2 text-sm text-[#8494b4] cursor-pointer">
+              <input
+                type="checkbox"
+                checked={filterNoResponse48}
+                onChange={(e) => setFilterNoResponse48(e.target.checked)}
+                className="h-4 w-4 rounded border-[#1f2d47] bg-[#141d2e] text-[#3b6ef5] focus:ring-[#3b6ef5]"
+              />
+              No response 48h
+            </label>
             <div className="relative flex-1 sm:flex-initial">
               <select
                 value={sortBy}
@@ -399,6 +491,58 @@ export default function ManageApplicants() {
           </div>
         </div>
 
+        {/* Bulk re-engagement toolbar */}
+        {!loading && (selectedIds.size > 0 || bulkProgress) && (
+          <div className="mb-4 rounded-[14px] border border-[#1f2d47] bg-[#0f1522] p-4">
+            {bulkProgress ? (
+              <div className="flex flex-col gap-2">
+                <p className="text-sm text-[#8494b4] tabular-nums">
+                  Sending interest check… {bulkProgress.current} / {bulkProgress.total}
+                </p>
+                <div className="h-2 w-full overflow-hidden rounded-full bg-[#1a2438]">
+                  <div
+                    className="h-full rounded-full bg-[#3b6ef5] transition-all duration-300"
+                    style={{
+                      width: `${(bulkProgress.current / bulkProgress.total) * 100}%`,
+                    }}
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <p className="text-sm text-[#8494b4]">
+                  <span className="font-semibold tabular-nums text-white">{selectedIds.size}</span> selected
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedIds(new Set())}
+                    className="rounded-[10px] border border-[#1f2d47] bg-[#0f1522] px-3 py-2 text-sm font-medium text-[#8494b4] hover:border-[#3b6ef5] hover:text-[#3b6ef5]"
+                  >
+                    Clear
+                  </button>
+                  <button
+                    type="button"
+                    onClick={bulkShortlist}
+                    className="inline-flex items-center gap-2 rounded-[10px] border border-[#3b6ef5]/50 bg-[#3b6ef5]/10 px-4 py-2 text-sm font-semibold text-[#3b6ef5] hover:bg-[#3b6ef5]/20"
+                  >
+                    <UserCheck className="h-4 w-4" />
+                    Shortlist {selectedIds.size}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={sendBulkInterestCheck}
+                    className="inline-flex items-center gap-2 rounded-[10px] bg-[#3b6ef5] px-4 py-2 text-sm font-semibold text-white hover:bg-[#4d7ef6]"
+                  >
+                    <Send className="h-4 w-4" />
+                    Send interest check to {selectedIds.size}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* DataTable */}
         {loading ? (
           <div className="space-y-3">
@@ -412,6 +556,8 @@ export default function ManageApplicants() {
             onSelectApplication={setSelectedApplicationId}
             onShortlist={(id) => updateStatus(id, "shortlisted")}
             onReject={(id) => updateStatus(id, "rejected")}
+            selectedIds={selectedIds}
+            onSelectionChange={setSelectedIds}
           />
         )}
 

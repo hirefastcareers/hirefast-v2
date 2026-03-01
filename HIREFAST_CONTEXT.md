@@ -13,6 +13,12 @@ Always do this. Do not skip or assume prior context.
 
 **Project guides:** Use only `.cursorrules` and `HIREFAST_CONTEXT.md` when the user asks questions. Do not treat other docs (e.g. PHASE2_DEPLOY.md) as authoritative unless the user explicitly references them.
 
+**Project owner:** The project owner is a complete beginner with Cursor and Supabase. When giving instructions (deployment, Supabase Dashboard, terminal, etc.):
+- Explain steps in plain language; avoid jargon or assume prior knowledge.
+- Break tasks into clear, numbered steps (“click X, then Y”).
+- Take the lead: recommend what to do next, suggest the simplest path, and say why.
+- If something can be done for them in code, do it; only ask them to do manual steps when necessary (e.g. Dashboard, secrets, domain).
+
 ---
 
 ## What is HireFast?
@@ -475,7 +481,7 @@ Matching is case-insensitive exact string comparison.
 - Phase 1: ✅ COMPLETE — full end-to-end flow working
 - Trust & comms (ratings, triggers, re-engagement, status-feed): ✅ COMPLETE
 - **Live:** https://www.hirefast.uk (Vercel + Supabase)
-- **Next:** Work through Platform Roadmap (Session 5 → 7, then Growth, then Scale).
+- **Next:** Growth & Monetisation → Scale.
 
 ---
 
@@ -491,30 +497,31 @@ Matching is case-insensitive exact string comparison.
 ### SESSION 4 — Trust & Verification Layer ✅ DONE
 1. ~~Ready to Work Badge 0–4~~ ✅ (rtwBadge.ts; shield on profile + job cards)
 2. ~~Two-Way Ratings trigger~~ ✅ (ratings-trigger Edge Function)
-3. ☐ Recruiters filter applicants by RTW score (0–4)
+3. ~~Recruiters filter by RTW score (0–4)~~ ✅ (ManageApplicants RTW dropdown)
 
-### SESSION 5 — Anti-Ghosting Engine
+### SESSION 5 — Anti-Ghosting Engine ✅ DONE
 1. ~~Interest Check~~ ✅ (CandidateSheet + CandidateProfile; magic link, interest_status)
 2. ~~Bulk Re-Engagement~~ ✅ (bulk-reengagement Edge Function)
 3. ~~Application timeline in CandidateSheet History tab~~ ✅ (application_events)
-4. ☐ Show "Last contacted" on applicant table rows
-5. ☐ Highlight rows where no response in 72hrs (amber)
-6. ☐ Bulk Re-Engagement UI: filter "No response 48hrs", one-click send selected, progress bar
+4. ~~Show "Last contacted" on applicant table rows~~ ✅
+5. ~~Highlight rows where no response in 72hrs (amber)~~ ✅
+6. ~~Bulk Re-Engagement UI~~ ✅ (filter No response 48h, checkboxes, send to selected, progress bar)
 
-### SESSION 6 — Candidate Experience Upgrade
-1. ☐ Job match notifications (new job matches skills/location → magic link email)
-2. ☐ Candidate dashboard: "Best matches today" (top 3), "Applied" section, RTW score + tips
-3. ☐ CV upload optional (Supabase Storage; never required for entry-level)
+### SESSION 6 — Candidate Experience Upgrade ✅ DONE
+1. ~~Job match notifications~~ ✅ (Edge Function job-match-notify; magic link to /candidate/jobs)
+2. ~~Candidate dashboard~~ ✅ (JobBoard: best matches top 3, Applied section, RTW + tips)
+3. ~~CV upload optional~~ ✅ (Settings candidate mode; bucket `cvs`)
 
-### SESSION 7 — Recruiter Power Features
-1. ☐ Employer profile on job cards (logo, description, sector; employers + Settings exist)
-2. ☐ Job performance dashboard (views, apply rate, drop-off, avg match score)
-3. ☐ Auto-reject low matches (auto_reject_low_matches in schema; wire match under 40% → reject + email)
-4. ☐ Bulk shortlist (select multiple, shortlist all)
+### SESSION 7 — Recruiter Power Features ✅ DONE
+1. ~~Employer profile on job cards~~ ✅ (logo placeholder, company name, industry_sector, company_description on JobBoard cards)
+2. ~~Job performance dashboard~~ ✅ (views, apply rate, avg match score per job at /recruiter/jobs; run `supabase/session7_job_views.sql` first)
+3. ~~Auto-reject low matches~~ ✅ (when job.auto_reject_low_matches and match &lt; 40%, status → rejected, outcome auto_rejected_low_match + event)
+4. ~~Bulk shortlist~~ ✅ (select multiple in Applicants, “Shortlist N” button)
 
 ### GROWTH & MONETISATION
-- Pricing: Free / Pro £49/mo / Agency £149/mo
-- Recruiter landing: social proof, pricing, "Post first job free" CTA
+- Pricing: Free / Pro £49/mo / Agency £149/mo ✅ (on recruiter landing)
+- Recruiter landing: social proof, pricing, "Post first job free" CTA ✅ (RecruiterLanding.tsx — three tiers, primary CTA "Post your first job free")
+- **Messaging:** Use **"30 second apply"** (not 15 seconds) everywhere — candidate and recruiter copy
 - Candidate SEO: /jobs/logistics/sheffield etc.
 - Weekly digest; job alerts; recruiter leaderboard
 
@@ -533,3 +540,27 @@ Matching is case-insensitive exact string comparison.
 **Status:** https://www.hirefast.uk. Frontend Vercel, backend Supabase.
 - **DEPLOYMENT.md** — Step-by-step (GitHub → Vercel → Supabase → domain)
 - **vercel.json** — SPA routing. **.env.example** — VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY
+
+**How to do the Supabase extras (optional)**
+
+**1. CV upload (so candidates can add a CV in Settings)**  
+- Open your project in [Supabase Dashboard](https://supabase.com/dashboard) → left menu **Storage**.  
+- Click **New bucket**. Name: `cvs`. Leave “Public bucket” **off**. Click **Create bucket**.  
+- Click the `cvs` bucket → **Policies** tab → **New policy** → choose **For full customization**.  
+- Policy name: e.g. `Allow authenticated uploads`.  
+- **Allowed operation:** tick **INSERT** and **SELECT**.  
+- **Target roles:** `authenticated`.  
+- **USING expression:** `true`. **WITH CHECK expression:** `true`.  
+- Click **Review** → **Save policy**.  
+Candidates can now upload a CV in **Settings** when logged in.
+
+**2. Job performance dashboard (Session 7)**  
+- In [Supabase Dashboard](https://supabase.com/dashboard) → **SQL Editor**, run the contents of `supabase/session7_job_views.sql`. This creates the `job_views` table so recruiters can see views and apply rate per job at **Job performance** in the recruiter nav.
+
+**3. Job match emails (magic link when new jobs match their area)**  
+- **Come back to this:** You need the **Supabase CLI** installed first (`supabase` was not recognized in terminal). When ready: install CLI from https://supabase.com/docs/guides/cli, then return here.  
+- Open a terminal in your project folder (where `supabase/` lives).  
+- Run: `supabase functions deploy job-match-notify`.  
+- If you’re asked to log in or link the project, follow the prompts.  
+- In Dashboard: **Edge Functions** → **Secrets**. Ensure `HIREFAST_APP_URL` is set to `https://www.hirefast.uk` (same as for the other functions).  
+After that the function is live. You can trigger it manually (e.g. from Edge Functions → job-match-notify → Invoke) or add a cron schedule later.

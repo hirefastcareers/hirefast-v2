@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Loader2,
@@ -37,6 +37,7 @@ import {
 
 const CANDIDATE_POSTCODE_KEY = "hirefast_candidate_postcode";
 const CANDIDATE_AVAILABILITY_KEY = "hirefast_candidate_availability";
+const JOB_VIEWS_RECORDED_KEY = "hirefast_job_views_recorded";
 const JOBS_PAGE_SIZE = 20;
 
 type SortOption = "best_match" | "nearest" | "latest";
@@ -172,7 +173,12 @@ type JobRow = {
   created_at: string;
   commute_threshold_mins?: number | null;
   required_skills?: string[] | null;
-  employers: { company_name: string | null } | null;
+  auto_reject_low_matches?: boolean;
+  employers: {
+    company_name: string | null;
+    industry_sector: string | null;
+    company_description: string | null;
+  } | null;
 };
 
 type JobWithCompany = JobRow;
@@ -330,6 +336,9 @@ export default function JobBoard() {
   const [sortBy, setSortBy] = useState<SortOption>("best_match");
   const [visibleCount, setVisibleCount] = useState(JOBS_PAGE_SIZE);
 
+  const [recentApplications, setRecentApplications] = useState<
+    { id: string; job_id: string; status: string; jobs: { title: string } | null; employers: { company_name: string | null } | null; created_at: string }[]
+  >([]);
   const [applyJob, setApplyJob] = useState<JobWithCompany | null>(null);
   const [applySubmitting, setApplySubmitting] = useState(false);
   const [applySuccess, setApplySuccess] = useState(false);
@@ -364,47 +373,81 @@ export default function JobBoard() {
       setError(null);
       const { data, error: e } = await supabase
         .from("jobs")
-        .select("*, employers(company_name)")
+        .select("*, employers(company_name, industry_sector, company_description)")
         .eq("is_active", true);
 
       if (e) {
         setError(e.message);
         setJobs([]);
       } else {
-        setJobs((data as JobWithCompany[]) ?? []);
+        const list = (data as JobWithCompany[]) ?? [];
+        setJobs(list);
+        // Record one view per job per session for job performance dashboard
+        try {
+          const raw = sessionStorage.getItem(JOB_VIEWS_RECORDED_KEY);
+          const recorded = new Set<string>(raw ? JSON.parse(raw) : []);
+          const toRecord = list.map((j) => j.id).filter((id) => !recorded.has(id));
+          if (toRecord.length > 0) {
+            await Promise.all(
+              toRecord.map((job_id) =>
+                supabase.from("job_views").insert({ job_id }).then(() => {
+                  recorded.add(job_id);
+                })
+              )
+            );
+            sessionStorage.setItem(
+              JOB_VIEWS_RECORDED_KEY,
+              JSON.stringify([...recorded])
+            );
+          }
+        } catch {
+          // ignore: job_views table may not exist yet
+        }
       }
       setLoading(false);
     }
     load();
   }, []);
 
-  // Fetch candidate (avatar, apply pre-fill)
+  // Fetch candidate (avatar, apply pre-fill) and their applications (applied ids + recent for dashboard)
   const fetchCandidate = useCallback(async (userId: string) => {
-    const { data } = await supabase
+    const { data: candidateData } = await supabase
       .from("candidates")
       .select("*")
       .eq("user_id", userId)
       .maybeSingle();
-    if (data) {
-      setCandidate(data as CandidateProfile);
-      if (data.postcode) {
-        setCandidatePostcode((p) => p || (data.postcode as string));
+    if (candidateData) {
+      setCandidate(candidateData as CandidateProfile);
+      const c = candidateData as CandidateProfile;
+      if (c.postcode) {
+        setCandidatePostcode((p) => p || (c.postcode as string));
         try {
-          localStorage.setItem(CANDIDATE_POSTCODE_KEY, data.postcode as string);
+          localStorage.setItem(CANDIDATE_POSTCODE_KEY, c.postcode as string);
         } catch {
           /* ignore */
         }
       }
-      if (data.availability && Array.isArray(data.availability)) {
-        setCandidateAvailability((prev) => (prev?.length ? prev : (data.availability as string[])));
+      if (c.availability && Array.isArray(c.availability)) {
+        setCandidateAvailability((prev) => (prev?.length ? prev : (c.availability as string[])));
         try {
-          localStorage.setItem(CANDIDATE_AVAILABILITY_KEY, JSON.stringify(data.availability));
+          localStorage.setItem(CANDIDATE_AVAILABILITY_KEY, JSON.stringify(c.availability));
         } catch {
           /* ignore */
         }
       }
+      const { data: apps } = await supabase
+        .from("applications")
+        .select("id, job_id, status, created_at, jobs(title), employers(company_name)")
+        .eq("candidate_id", candidateData.id)
+        .order("created_at", { ascending: false })
+        .limit(5);
+      const list = (apps ?? []) as unknown as { id: string; job_id: string; status: string; jobs: { title: string } | null; employers: { company_name: string | null } | null; created_at: string }[];
+      setAppliedJobIds(new Set(list.map((a) => a.job_id)));
+      setRecentApplications(list);
     } else {
       setCandidate(null);
+      setRecentApplications([]);
+      setAppliedJobIds(new Set());
     }
   }, []);
 
@@ -646,6 +689,22 @@ export default function JobBoard() {
             match_score: overallScore,
           })
           .eq("id", applicationId);
+
+        // Auto-reject low matches when job has auto_reject_low_matches and score < 40%
+        if (applyJob.auto_reject_low_matches && overallScore < 40) {
+          await supabase
+            .from("applications")
+            .update({
+              status: "rejected",
+              outcome: "auto_rejected_low_match",
+            })
+            .eq("id", applicationId);
+          await supabase.from("application_events").insert({
+            application_id: applicationId,
+            event_type: "auto_rejected",
+            message: `Auto-rejected: match score ${overallScore}% below 40% threshold`,
+          });
+        }
       } catch (err) {
         console.error("Scoring failed:", err);
       }
@@ -704,7 +763,7 @@ export default function JobBoard() {
           </div>
           <p className="flex items-center gap-1.5 text-amber-400 text-sm mt-4">
             <Zap className="w-4 h-4 shrink-0" aria-hidden />
-            Apply in 15 seconds
+            Apply in 30 seconds
           </p>
         </SheetHeader>
 
@@ -780,7 +839,7 @@ export default function JobBoard() {
                 ) : (
                   <>
                     <Zap className="w-4 h-4 shrink-0" aria-hidden />
-                    Apply Now — 15 seconds
+                    Apply Now — 30 seconds
                   </>
                 )}
               </Button>
@@ -799,13 +858,14 @@ export default function JobBoard() {
                 We've notified the recruiter. You'll hear back within 24 hours.
               </p>
               <div className="flex flex-col gap-2 mt-6">
-                <Button
-                  variant="outline"
-                  className="border-[#2a3a5c] text-[#6b7fa3] cursor-not-allowed"
-                  disabled
-                >
-                  View All Applications (coming soon)
-                </Button>
+                <Link to="/candidate/applications" onClick={closeApplySheet}>
+                  <Button
+                    variant="outline"
+                    className="w-full border-[#1f2d47] text-[#8494b4] hover:border-[#3b6ef5] hover:text-[#3b6ef5]"
+                  >
+                    View All Applications
+                  </Button>
+                </Link>
                 <Button variant="ghost" className="text-white" onClick={closeApplySheet}>
                   Back to Jobs
                 </Button>
@@ -829,10 +889,165 @@ export default function JobBoard() {
               {loading
                 ? "…"
                 : candidate
-                  ? `${filteredAndSortedJobs.length} jobs · ranked by match, commute & skills · Apply in 15 seconds`
+                  ? `${filteredAndSortedJobs.length} jobs · ranked by match, commute & skills · Apply in 30 seconds`
                   : `${filteredAndSortedJobs.length} jobs available`}
             </p>
           </div>
+
+          {/* Candidate dashboard: best matches, applied, RTW + tips */}
+          {candidate && !loading && (
+            <div className="mb-6 max-w-2xl mx-auto w-full space-y-4">
+              <div className="rounded-[14px] border border-[#1f2d47] bg-[#0f1522] p-4">
+                <h2 className="text-sm font-semibold text-[#f0f4ff] tracking-tight mb-3">
+                  Your best matches today
+                </h2>
+                <div className="flex flex-col gap-2">
+                  {filteredAndSortedJobs
+                    .filter((j) => !appliedJobIds.has(j.id))
+                    .slice(0, 3)
+                    .map((job) => {
+                      const score = jobScores[job.id];
+                      const locationScore =
+                        score?.riskLevel === "low"
+                          ? 100
+                          : score?.riskLevel === "medium"
+                            ? 60
+                            : score?.riskLevel === "high"
+                              ? 20
+                              : 0;
+                      const overallMatch =
+                        score != null ? Math.round((locationScore + score.skillsMatch) / 2) : null;
+                      return (
+                        <div
+                          key={job.id}
+                          className="flex items-center justify-between gap-3 rounded-[10px] border border-[#1f2d47] bg-[#141d2e] p-3"
+                        >
+                          <div className="min-w-0 flex-1">
+                            <p className="font-medium text-[#f0f4ff] text-sm truncate">{job.title}</p>
+                            <p className="text-xs text-[#8494b4] truncate">
+                              {job.employers?.company_name ?? "—"} · {job.pay_rate ?? "—"}
+                            </p>
+                          </div>
+                          {overallMatch != null && (
+                            <span
+                              className={cn(
+                                "text-xs font-semibold tabular-nums shrink-0 px-2 py-0.5 rounded-[6px] border",
+                                overallMatch >= 80
+                                  ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/25"
+                                  : overallMatch >= 60
+                                    ? "bg-amber-500/10 text-amber-400 border-amber-500/25"
+                                    : "bg-[#1a2438] text-[#8494b4] border-[#1f2d47]"
+                              )}
+                            >
+                              {overallMatch}%
+                            </span>
+                          )}
+                          <button
+                            type="button"
+                            onClick={() => openApplySheet(job)}
+                            className="shrink-0 rounded-[10px] bg-[#3b6ef5] hover:bg-[#4d7ef6] px-3 py-1.5 text-xs font-semibold text-white transition-colors"
+                          >
+                            Apply
+                          </button>
+                        </div>
+                      );
+                    })}
+                  {filteredAndSortedJobs.filter((j) => !appliedJobIds.has(j.id)).length === 0 && (
+                    <p className="text-sm text-[#8494b4]">You’ve applied to all top matches. Browse more below.</p>
+                  )}
+                </div>
+              </div>
+
+              {recentApplications.length > 0 && (
+                <div className="rounded-[14px] border border-[#1f2d47] bg-[#0f1522] p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <h2 className="text-sm font-semibold text-[#f0f4ff] tracking-tight">Applied</h2>
+                    <Link
+                      to="/candidate/applications"
+                      className="text-xs font-medium text-[#3b6ef5] hover:text-[#4d7ef6]"
+                    >
+                      View all
+                    </Link>
+                  </div>
+                  <ul className="space-y-2">
+                    {recentApplications.slice(0, 3).map((app) => {
+                      const job = app.jobs;
+                      const employer = app.employers;
+                      const title = job?.title ?? "Job";
+                      const company = employer?.company_name ?? "—";
+                      const statusClass =
+                        app.status === "shortlisted"
+                          ? "bg-[#3b6ef5]/10 text-[#3b6ef5] border-[#3b6ef5]/25"
+                          : app.status === "rejected"
+                            ? "bg-rose-500/10 text-rose-400 border-rose-500/25"
+                            : "bg-[#1a2438] text-[#8494b4] border-[#1f2d47]";
+                      const statusLabel =
+                        app.status === "shortlisted" ? "Shortlisted" : app.status === "rejected" ? "Rejected" : "Pending";
+                      return (
+                        <li key={app.id}>
+                          <Link
+                            to="/candidate/applications"
+                            className="flex items-center justify-between gap-2 rounded-[10px] border border-[#1f2d47] bg-[#141d2e] p-3 transition-colors hover:bg-[#1a2438]"
+                          >
+                            <div className="min-w-0 flex-1">
+                              <p className="font-medium text-[#f0f4ff] text-sm truncate">{title}</p>
+                              <p className="text-xs text-[#8494b4] truncate">{company}</p>
+                            </div>
+                            <span
+                              className={cn(
+                                "shrink-0 text-xs font-medium rounded-[6px] border px-2 py-0.5",
+                                statusClass
+                              )}
+                            >
+                              {statusLabel}
+                            </span>
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              )}
+
+              <div className="rounded-[14px] border border-[#1f2d47] bg-[#0f1522] p-4">
+                <h2 className="text-sm font-semibold text-[#f0f4ff] tracking-tight mb-2">
+                  Ready to Work
+                </h2>
+                {(() => {
+                  const rtwScore = getRtwScore({
+                    has_rtw: candidate.has_rtw,
+                    rtw_verified: candidate.rtw_verified,
+                    ni_confirmed: candidate.ni_confirmed,
+                    dbs_status: candidate.dbs_status,
+                  });
+                  const label = getRtwBadgeLabel(rtwScore);
+                  const cls = getRtwBadgeClass(rtwScore);
+                  const tips: string[] = [];
+                  if (rtwScore < 1) tips.push("Declare Right to Work in Settings to get started.");
+                  if (rtwScore >= 1 && rtwScore < 3) tips.push("Confirm your NI number in Settings to reach 3/4.");
+                  if (rtwScore >= 1 && rtwScore < 4) tips.push("Add DBS status in Settings to reach 4/4 and stand out.");
+                  if (rtwScore >= 4) tips.push("Your profile is fully set up. Recruiters prioritise 4/4 candidates.");
+                  return (
+                    <>
+                      <div className={cn("inline-flex items-center gap-2 rounded-[10px] border px-3 py-2 mb-2", cls)}>
+                        <Shield className="w-4 h-4 shrink-0" />
+                        <span className="text-sm font-medium">{label}</span>
+                      </div>
+                      {tips.length > 0 && (
+                        <p className="text-xs text-[#8494b4] mt-2">{tips[0]}</p>
+                      )}
+                      <Link
+                        to="/settings"
+                        className="mt-2 inline-block text-xs font-medium text-[#3b6ef5] hover:text-[#4d7ef6]"
+                      >
+                        Update in Settings →
+                      </Link>
+                    </>
+                  );
+                })()}
+              </div>
+            </div>
+          )}
 
           <div className="flex gap-2 mb-3 max-w-2xl mx-auto w-full">
             <Input
@@ -1027,6 +1242,30 @@ export default function JobBoard() {
                                     </span>
                                   )}
                                 </div>
+
+                                {/* Employer profile: logo placeholder, name, sector, description */}
+                                {(job.employers?.company_name || job.employers?.company_description || job.employers?.industry_sector) && (
+                                  <div className="flex items-start gap-2 mt-3 pt-3 border-t border-[#1f2d47]">
+                                    <div className="w-8 h-8 rounded-[8px] bg-[#1a2438] border border-[#1f2d47] flex items-center justify-center flex-shrink-0">
+                                      <Building2 className="w-4 h-4 text-[#8494b4]" />
+                                    </div>
+                                    <div className="min-w-0 flex-1">
+                                      <p className="text-xs font-semibold text-[#f0f4ff]">
+                                        {job.employers?.company_name ?? "Employer"}
+                                      </p>
+                                      {(job.employers?.industry_sector || job.sector) && (
+                                        <p className="text-[11px] text-[#8494b4] mt-0.5">
+                                          {job.employers?.industry_sector ?? job.sector}
+                                        </p>
+                                      )}
+                                      {job.employers?.company_description && (
+                                        <p className="text-[11px] text-[#8494b4] mt-0.5 line-clamp-2">
+                                          {job.employers.company_description}
+                                        </p>
+                                      )}
+                                    </div>
+                                  </div>
+                                )}
                               </div>
                             </div>
 

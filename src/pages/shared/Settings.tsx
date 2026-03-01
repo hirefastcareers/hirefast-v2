@@ -10,6 +10,8 @@ import {
   MapPin,
   ExternalLink,
   Zap,
+  FileUp,
+  FileText,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { cn } from "@/lib/utils";
@@ -91,6 +93,13 @@ export default function Settings() {
   const [employerSaving, setEmployerSaving] = useState<boolean>(false);
   const [descriptionExpanded, setDescriptionExpanded] = useState<boolean>(false);
 
+  // Candidate mode: no recruiter_employers but has candidates row
+  const [isCandidateMode, setIsCandidateMode] = useState<boolean>(false);
+  const [candidateId, setCandidateId] = useState<string | null>(null);
+  const [candidateCvUrl, setCandidateCvUrl] = useState<string | null>(null);
+  const [cvUploading, setCvUploading] = useState<boolean>(false);
+  const [cvUploadError, setCvUploadError] = useState<string | null>(null);
+
   useEffect(() => {
     let cancelled = false;
 
@@ -117,17 +126,30 @@ export default function Settings() {
         .eq("user_id", user.id)
         .maybeSingle();
 
-      if (reError || !re?.employer_id) {
-        if (!cancelled) setLoading(false);
+      if (!cancelled && (reError || !re?.employer_id)) {
+        const { data: cand } = await supabase
+          .from("candidates")
+          .select("id, cv_url")
+          .eq("user_id", user.id)
+          .maybeSingle();
+        if (cand) {
+          setIsCandidateMode(true);
+          setCandidateId(cand.id);
+          setCandidateCvUrl(cand.cv_url ?? null);
+        } else {
+          navigate("/", { replace: true });
+        }
+        setLoading(false);
         return;
       }
 
-      setEmployerId(re.employer_id);
+      const employerIdRef = re!.employer_id;
+      setEmployerId(employerIdRef);
 
       const { data: emp, error: empError } = await supabase
         .from("employers")
         .select("id, company_name, industry_sector, location, website, company_description")
-        .eq("id", re.employer_id)
+        .eq("id", employerIdRef)
         .single();
 
       if (!cancelled) {
@@ -223,6 +245,51 @@ export default function Settings() {
   const inputClass =
     "w-full bg-[#141d2e] border border-[#1f2d47] rounded-[10px] px-3 py-2 text-[#f0f4ff] text-sm focus:outline-none focus:border-[#3b6ef5]";
 
+  const handleCvUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !candidateId || !userEmail) return;
+    if (file.size > 5 * 1024 * 1024) {
+      setCvUploadError("File must be under 5MB.");
+      return;
+    }
+    setCvUploadError(null);
+    setCvUploading(true);
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) {
+      setCvUploading(false);
+      return;
+    }
+    const ext = file.name.split(".").pop() || "pdf";
+    const path = `${user.id}/cv_${Date.now()}.${ext}`;
+    const { error: uploadError } = await supabase.storage.from("cvs").upload(path, file, {
+      upsert: true,
+      contentType: file.type,
+    });
+    if (uploadError) {
+      setCvUploadError(uploadError.message || "Upload failed. Ensure the CV bucket exists in Supabase.");
+      setCvUploading(false);
+      return;
+    }
+    const { data: urlData } = supabase.storage.from("cvs").getPublicUrl(path);
+    const publicUrl = urlData?.publicUrl ?? "";
+    const { error: updateError } = await supabase
+      .from("candidates")
+      .update({ cv_url: publicUrl })
+      .eq("id", candidateId);
+    if (updateError) {
+      setCvUploadError(updateError.message);
+      setCvUploading(false);
+      return;
+    }
+    setCandidateCvUrl(publicUrl);
+    setCvUploading(false);
+    setToast("CV updated");
+    setToastVariant("emerald");
+    setTimeout(() => setToast(null), 4000);
+  };
+
   if (loading) {
     return (
       <RecruiterLayout>
@@ -234,6 +301,121 @@ export default function Settings() {
           <SettingsSkeleton />
         </div>
       </RecruiterLayout>
+    );
+  }
+
+  if (isCandidateMode) {
+    return (
+      <div className="min-h-screen bg-[#090d16] text-white">
+        <div className="max-w-2xl mx-auto px-4 py-8">
+          {toast && (
+            <div
+              className={cn(
+                "fixed bottom-4 left-4 right-4 z-50 rounded-[10px] px-4 py-3 text-sm shadow-lg md:left-1/2 md:right-auto md:max-w-sm md:-translate-x-1/2",
+                toastVariant === "emerald"
+                  ? "border border-emerald-500/50 bg-emerald-500/10 text-emerald-400"
+                  : "border border-[#1f2d47] bg-[#0f1522] text-[#f0f4ff]"
+              )}
+              role="status"
+            >
+              {toast}
+            </div>
+          )}
+          <h1 className="text-2xl font-bold text-[#f0f4ff] tracking-tight">Settings</h1>
+          <p className="text-sm text-[#8494b4] mt-1">Manage your account and CV</p>
+
+          <section className="mt-6 rounded-[14px] border border-[#1f2d47] bg-[#0f1522] p-5">
+            <div className="mb-4 flex items-center gap-2">
+              <User className="h-5 w-5 text-[#8494b4]" />
+              <h2 className="font-medium text-[#f0f4ff]">Account</h2>
+            </div>
+            <div className="space-y-3">
+              <div>
+                <p className="text-sm text-[#8494b4]">Email</p>
+                <p className="font-mono text-sm text-[#f0f4ff]">{userEmail ?? "—"}</p>
+              </div>
+              <div>
+                <p className="text-sm text-[#8494b4]">Auth</p>
+                <p className="flex items-center gap-1.5 text-sm text-[#f0f4ff]">
+                  <Zap className="h-4 w-4 text-amber-400" />
+                  Magic Link — no password
+                </p>
+              </div>
+            </div>
+            <div className="mt-5">
+              {!signOutConfirm ? (
+                <Button
+                  variant="outline"
+                  className="w-full border-[#1f2d47] text-[#f0f4ff] hover:bg-[#1a2438]"
+                  onClick={() => setSignOutConfirm(true)}
+                >
+                  <LogOut className="h-4 w-4" />
+                  Sign Out
+                </Button>
+              ) : (
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    className="border-[#1f2d47] text-[#f0f4ff]"
+                    onClick={() => setSignOutConfirm(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    className="bg-rose-500/10 text-rose-400 border-rose-500/25 hover:bg-rose-500/20"
+                    onClick={async () => {
+                      await supabase.auth.signOut();
+                      navigate("/", { replace: true });
+                    }}
+                  >
+                    Sign Out
+                  </Button>
+                </div>
+              )}
+            </div>
+          </section>
+
+          <section className="mt-6 rounded-[14px] border border-[#1f2d47] bg-[#0f1522] p-5">
+            <div className="mb-4 flex items-center gap-2">
+              <FileText className="h-5 w-5 text-[#8494b4]" />
+              <h2 className="font-medium text-[#f0f4ff]">CV (optional)</h2>
+            </div>
+            <p className="text-sm text-[#8494b4] mb-4">
+              Not required for entry-level roles. Upload if you want recruiters to see it for skilled positions.
+            </p>
+            {candidateCvUrl ? (
+              <div className="flex items-center justify-between gap-3 rounded-[10px] border border-[#1f2d47] bg-[#141d2e] p-3">
+                <div className="flex items-center gap-2 min-w-0">
+                  <FileText className="h-4 w-4 shrink-0 text-emerald-400" />
+                  <span className="text-sm text-[#f0f4ff] truncate">CV uploaded</span>
+                </div>
+                <a
+                  href={candidateCvUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-xs font-medium text-[#3b6ef5] hover:text-[#4d7ef6] shrink-0"
+                >
+                  View
+                </a>
+              </div>
+            ) : null}
+            <label className="mt-3 inline-flex cursor-pointer items-center gap-2 rounded-[10px] border border-[#1f2d47] bg-[#141d2e] px-4 py-2.5 text-sm font-medium text-[#f0f4ff] hover:bg-[#1a2438] transition-colors">
+              <FileUp className="h-4 w-4" />
+              {cvUploading ? "Uploading…" : candidateCvUrl ? "Replace CV" : "Upload CV"}
+              <input
+                type="file"
+                accept=".pdf,.doc,.docx"
+                className="sr-only"
+                disabled={cvUploading}
+                onChange={handleCvUpload}
+              />
+            </label>
+            {cvUploadError && (
+              <p className="mt-2 text-sm text-rose-400">{cvUploadError}</p>
+            )}
+          </section>
+        </div>
+      </div>
     );
   }
 

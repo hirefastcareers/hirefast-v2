@@ -47,7 +47,7 @@ export default function CandidateLanding() {
       {/* 2. Hero Section */}
       <section className="pt-12 pb-16 md:pt-20 md:pb-24 max-w-4xl">
         <h1 className="text-3xl font-bold leading-tight mb-4 md:text-4xl lg:text-5xl">
-          Find Your Next Job in 15 Seconds
+          Find Your Next Job in 30 Seconds
         </h1>
         <p className="text-[#6b7fa3] text-lg mb-8 max-w-xl md:text-xl">
           No CV. No password. No lengthy forms. Just tap, apply, and get hired
@@ -74,7 +74,7 @@ export default function CandidateLanding() {
       <section className="pb-16">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-4xl mx-auto">
           <div className="rounded-xl border border-[#2a3a5c] bg-[#141f33] p-5">
-            <p className="text-[#3b6ef5] font-bold text-xl mb-1">15 Seconds</p>
+            <p className="text-[#3b6ef5] font-bold text-xl mb-1">30 Seconds</p>
             <p className="text-[#6b7fa3] text-sm">Average application time</p>
           </div>
           <div className="rounded-xl border border-[#2a3a5c] bg-[#141f33] p-5">
@@ -196,7 +196,7 @@ export default function CandidateLanding() {
               </div>
               <blockquote className="text-white text-lg mb-4">
                 &ldquo;Every other job site made me fill in my whole work
-                history for a warehouse job. This took 15 seconds.&rdquo;
+                history for a warehouse job. This took 30 seconds.&rdquo;
               </blockquote>
               <p className="text-[#6b7fa3] text-sm">
                 — Priya, Production Operative, Coventry
