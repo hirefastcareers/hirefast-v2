@@ -81,8 +81,10 @@ Core value proposition: speed and zero friction.
 - Nav items:    rounded-[8px]
 - Tab triggers: rounded-[8px]
 
-### Wordmark
-"Hire" in text-white + "Fast" in text-[#3b6ef5], font-bold tracking-tight
+### Brand / logo (HireFastLogo)
+- Use `<HireFastLogo />` from `@/components/ui/HireFastLogo` in all nav bars (size="md").
+- Use the logo on landing page heroes (size="lg").
+- Never use a text-based "Hire" / "Fast" wordmark anywhere in the app.
 
 ---
 
@@ -275,7 +277,7 @@ Every Supabase data query that reads/updates recruiter or employer data MUST be 
   No match + new candidate → /candidate/verify
 - Recruiter layout: RecruiterLayout.tsx wraps all recruiter pages.
   max-w-5xl canvas. src/layouts/RecruiterLayout.tsx
-- Candidate nav: HireFast wordmark left + Jobs/Settings links right
+- Candidate nav: HireFastLogo (size="md") left + Jobs/Settings links right
 - Commute scoring: Postcodes.io (free, no API key)
   Postcode must be stripped of spaces before API call:
   postcode.replace(/\s+/g, '')
@@ -321,6 +323,7 @@ Every Supabase data query that reads/updates recruiter or employer data MUST be 
 
 ### Navigation
 - Header: bg-[#090d16]/90 backdrop-blur-xl border-b border-[#1f2d47]
+- Logo: HireFastLogo (size="md") in all nav bars; size="lg" on landing page heroes only
 - Active: text-[#3b6ef5] rounded-[8px]
 - Inactive: text-[#8494b4] hover:text-white rounded-[8px]
 
@@ -365,6 +368,7 @@ Every Supabase data query that reads/updates recruiter or employer data MUST be 
 ---
 
 ## Components Built
+- src/components/ui/HireFastLogo.tsx         ✅ (use in nav bars and landing heroes; never text wordmark)
 - src/layouts/RecruiterLayout.tsx             ✅ v2.0
 - src/layouts/CandidateLayout.tsx             ✅ v2.0
 - src/components/recruiter/MatchScoreRing.tsx ✅ v2.0
@@ -445,6 +449,7 @@ Every Supabase data query that reads/updates recruiter or employer data MUST be 
 22. Postcode API calls — strip spaces: postcode.replace(/\s+/g, '')
 23. Design tokens — always use v2.0 tokens, never old (#0f1624 / #141f33 / #2a3a5c / #6b7fa3)
 24. Font — DM Sans for UI, DM Mono for numeric data
+25. Brand logo — use HireFastLogo in all nav bars and on landing heroes; never use text-based wordmark ("Hire" / "Fast" spans) anywhere
 
 ---
 

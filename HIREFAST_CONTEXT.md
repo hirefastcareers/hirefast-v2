@@ -77,7 +77,7 @@ The core value proposition is speed and zero friction —
 - Text-1: #f0f4ff (headings, important values)
 - Text-2: #8494b4 (metadata, labels — never pure white)
 - Text-3: #4d5f7a (placeholders, tertiary info)
-- Wordmark: "Hire" in #f0f4ff + "Fast" in #3b6ef5, font-bold tracking-tight
+- Brand logo: Use `<HireFastLogo />` (src/components/ui/HireFastLogo.tsx) in all nav bars (size="md") and on landing page heroes (size="lg"). Never use a text-based "Hire" / "Fast" wordmark anywhere in the app.
 
 ### Border Radius
 - Cards and table wrappers: rounded-[14px]
@@ -335,6 +335,7 @@ All Supabase data queries that touch recruiter or employer data must be scoped b
 - CandidateLayout.tsx wraps all candidate pages
   src/layouts/CandidateLayout.tsx
 - Header: bg-[#090d16]/90 backdrop-blur-xl border-b border-[#1f2d47]
+- Logo: HireFastLogo in all nav bars (size="md"); on landing page heroes use size="lg". Never use text-based wordmark.
 
 ### Commute Scoring
 - Postcodes.io (free, no API key required)
@@ -399,6 +400,7 @@ All Supabase data queries that touch recruiter or employer data must be scoped b
 ---
 
 ## Components Built
+- src/components/ui/HireFastLogo.tsx          ✅ (nav bars + landing heroes; never text wordmark)
 - src/layouts/RecruiterLayout.tsx              ✅ v2.0
 - src/layouts/CandidateLayout.tsx              ✅ v2.0
 - src/components/recruiter/MatchScoreRing.tsx  ✅ v2.0
@@ -486,6 +488,7 @@ All Supabase data queries that touch recruiter or employer data must be scoped b
 24. Apply button always fully visible — never fade on hover
 25. Bottom sheet for apply — never a centred modal on mobile
 26. Design tokens — always v2.0, never old tokens
+27. Brand logo — use HireFastLogo in all nav bars and on landing page heroes; never use text-based "Hire" / "Fast" wordmark anywhere
 
 ### Design system patterns (from docs/design-system.html)
 - **Type scale:** Display 36px/700, H1 26px/700, H2 20px/600, Body 14px, Small 12px, Mono for data.
