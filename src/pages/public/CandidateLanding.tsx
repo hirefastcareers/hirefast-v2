@@ -5,6 +5,7 @@ import {
   Zap,
   Star,
 } from "lucide-react";
+import { HireFastLogo } from "@/components/ui/HireFastLogo";
 
 const SECTORS = [
   "Logistics",
@@ -30,9 +31,8 @@ export default function CandidateLanding() {
       {/* 1. Navbar */}
       <nav className="sticky top-0 z-50 flex items-center justify-between px-4 py-4 bg-[#090d16] border-b border-[#1f2d47] sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto w-full flex items-center justify-between">
-          <Link to="/" className="text-xl font-bold tracking-tight md:text-2xl">
-            <span className="text-white">Hire</span>
-            <span className="text-[#3b6ef5]">Fast</span>
+          <Link to="/" className="flex items-center">
+            <HireFastLogo size="md" />
           </Link>
           <Link
             to="/recruiters"
@@ -226,10 +226,9 @@ export default function CandidateLanding() {
         <div className="max-w-4xl mx-auto flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
           <Link
             to="/"
-            className="text-lg font-bold tracking-tight self-start sm:self-auto"
+            className="flex items-center self-start sm:self-auto"
           >
-            <span className="text-white">Hire</span>
-            <span className="text-[#3b6ef5]">Fast</span>
+            <HireFastLogo size="sm" />
           </Link>
           <div className="flex flex-wrap gap-6 text-sm text-[#8494b4]">
             <Link to="/recruiters" className="hover:text-white transition-colors">

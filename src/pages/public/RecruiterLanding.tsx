@@ -12,6 +12,7 @@ import {
   BadgeCheck,
   CreditCard,
 } from "lucide-react";
+import { HireFastLogo } from "@/components/ui/HireFastLogo";
 
 export default function RecruiterLanding() {
   const scrollToHowItWorks = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -26,9 +27,8 @@ export default function RecruiterLanding() {
       {/* 1. Navbar */}
       <nav className="sticky top-0 z-50 flex items-center justify-between px-4 py-4 bg-[#090d16] border-b border-[#1f2d47] sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto w-full flex items-center justify-between">
-          <Link to="/recruiters" className="text-xl font-bold tracking-tight md:text-2xl">
-            <span className="text-white">Hire</span>
-            <span className="text-[#3b6ef5]">Fast</span>
+          <Link to="/recruiters" className="flex items-center">
+            <HireFastLogo size="md" />
           </Link>
           <Link
             to="/"
@@ -332,9 +332,8 @@ export default function RecruiterLanding() {
       {/* 9. Footer */}
       <footer className="py-8 border-t border-[#1f2d47]">
         <div className="max-w-5xl mx-auto flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between text-center sm:text-left">
-          <Link to="/recruiters" className="text-lg font-bold">
-            <span className="text-white">Hire</span>
-            <span className="text-[#3b6ef5]">Fast</span>
+          <Link to="/recruiters" className="flex items-center">
+            <HireFastLogo size="sm" />
           </Link>
           <div className="flex flex-wrap justify-center gap-4 sm:gap-6 text-sm text-[#8494b4]">
             <Link to="/" className="hover:text-white transition-colors">

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Shield, Lock, Clock } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { HireFastLogo } from "@/components/ui/HireFastLogo";
 
 export default function Register() {
   const [fullName, setFullName] = useState<string>("");
@@ -65,12 +66,8 @@ export default function Register() {
     <div className="min-h-screen bg-[#090d16] text-white">
       {/* Minimal header */}
       <header className="border-b border-[#1f2d47] px-4 py-4 md:px-6">
-        <Link
-          to="/"
-          className="text-xl font-bold tracking-tight md:text-2xl inline-block"
-        >
-          <span className="text-white">Hire</span>
-          <span className="text-[#3b6ef5]">Fast</span>
+        <Link to="/" className="inline-flex items-center">
+          <HireFastLogo size="md" />
         </Link>
       </header>
 

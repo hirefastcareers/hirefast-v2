@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { HireFastLogo } from "@/components/ui/HireFastLogo";
 
 type Status = "resolving" | "recruiter" | "candidate" | "expired" | "error";
 
@@ -97,10 +98,7 @@ export default function MagicLinkHandler() {
     return (
       <div className="min-h-screen bg-[#090d16] text-white flex flex-col items-center justify-center px-4">
         <div className="w-full max-w-md rounded-[12px] border border-[#1f2d47] bg-[#0f1522] p-8 flex flex-col items-center gap-6">
-          <span className="font-bold text-xl">
-            <span className="text-white">Hire</span>
-            <span className="text-[#3b6ef5]">Fast</span>
-          </span>
+          <HireFastLogo size="md" />
           <Loader2 className="h-10 w-10 text-[#3b6ef5] animate-spin" aria-hidden />
           <p className="text-[#8494b4] text-sm">Signing you in...</p>
         </div>

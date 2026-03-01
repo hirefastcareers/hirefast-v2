@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Car, Bus, PersonStanding, Zap } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { cn } from "@/lib/utils";
+import { HireFastLogo } from "@/components/ui/HireFastLogo";
 
 const ALL_SKILLS = [
   "Forklift",
@@ -172,12 +173,8 @@ export default function ShiftPreferences() {
     <div className="min-h-screen bg-[#090d16] text-white">
       {/* Header */}
       <header className="border-b border-[#1f2d47] px-4 py-4">
-        <Link
-          to="/"
-          className="text-xl font-bold tracking-tight inline-block"
-        >
-          <span className="text-white">Hire</span>
-          <span className="text-[#3b6ef5]">Fast</span>
+        <Link to="/" className="inline-flex items-center">
+          <HireFastLogo size="md" />
         </Link>
       </header>
 
