@@ -1,5 +1,5 @@
 # HireFast — Master Build Context
-## Last updated: Session 3 complete — 01/03/2026
+## Last updated: Session 3 complete + live on hirefast.uk — 01/03/2026
 
 ---
 
@@ -187,6 +187,8 @@ C:\Users\tomfo\Documents\HireFast\hirefast-v2\hirefast-v2
 - immediate_start boolean
 - is_active boolean
 - status text
+- closed_at timestamptz (set when deactivated; 48hrs later triggers ratings email)
+- ratings_trigger_sent_at timestamptz
 - created_at timestamptz
 
 ### applications
@@ -246,6 +248,7 @@ C:\Users\tomfo\Documents\HireFast\hirefast-v2\hirefast-v2
 - application_id uuid (FK → applications.id)
 - event_type text
 - message text
+- sms_sent_at timestamptz (when status-feed-sms sent notification)
 - created_at timestamptz
 
 ---
@@ -271,6 +274,9 @@ Matching is case-insensitive exact string comparison.
 - employers: Recruiters ALL (scoped to created_by)
 - jobs: Recruiters ALL (scoped to recruiter_id)
 - recruiter_employers: Users SELECT own, Service role ALL
+- ratings:
+  Candidates SELECT/INSERT own (candidate_id → candidates.id where candidates.user_id = auth.uid(); INSERT only with rated_by = 'candidate')
+  Recruiters SELECT/INSERT (recruiter_id = auth.uid(); INSERT only with rated_by = 'recruiter')
 
 ---
 
@@ -394,6 +400,7 @@ Matching is case-insensitive exact string comparison.
 | Profile Complete | src/pages/candidate/ProfileComplete.tsx | /candidate/profile-complete | ✅ v2.0 |
 | Job Board | src/pages/candidate/JobBoard.tsx | /candidate/jobs | ✅ v2.0 |
 | Applications History | src/pages/candidate/Applications.tsx | /candidate/applications | ✅ v2.0 |
+| Feedback (Ratings) | src/pages/candidate/Ratings.tsx | /candidate/ratings | ✅ v2.0 |
 
 ### Recruiter Flow
 | Page | File | Route | Status |
@@ -452,7 +459,8 @@ Matching is case-insensitive exact string comparison.
 - Phase 1: ✅ COMPLETE — full end-to-end flow working 28/02/2026
 - Session 1: ✅ COMPLETE — design system v2.0 established
 - Session 2: ✅ COMPLETE — all pages upgraded to v2.0 tokens
-- Session 3: ✅ Complete — Radix a11y, Applications page, shift match, RTW badge, Login/Settings/CandidateProfile v2.0
+- Session 3: ✅ Complete — Radix a11y, Applications page, shift match, RTW badge, Login/Settings/CandidateProfile v2.0, deployment live
+- **Live:** https://www.hirefast.uk (Vercel + Supabase)
 
 ---
 
@@ -464,11 +472,13 @@ Matching is case-insensitive exact string comparison.
 5. ~~CandidateProfile.tsx — upgrade to v2.0 tokens~~ ✅
 6. ~~Login.tsx — upgrade to v2.0 tokens~~ ✅
 7. ~~Settings.tsx — upgrade to v2.0 tokens~~ ✅
-8. Deploy to Vercel + hirefast.uk domain (when ready)
+8. ~~Deploy to Vercel + hirefast.uk domain~~ ✅ Live at www.hirefast.uk
 
 ---
 
-## Deployment (Vercel + hirefast.uk)
+## Deployment (Vercel + hirefast.uk) — ✅ LIVE
+**Status:** Live at https://www.hirefast.uk. Frontend on Vercel, backend on Supabase.
+
 **Instructions must be simplified:** The project owner needs deployment steps that are beginner-friendly, step-by-step, and free of jargon. Break everything into numbered steps with screenshots or clear "click this, then that" guidance. Avoid assumptions about prior DevOps or CLI experience. When documenting deployment, write for someone who has not done this before.
 
 - **DEPLOYMENT.md** — Full step-by-step guide (GitHub → Vercel → Supabase → custom domain)
@@ -477,10 +487,10 @@ Matching is case-insensitive exact string comparison.
 
 ---
 
-## Phase 2 Features (not yet built)
-1. ~~Shift Pattern Matching~~ — wired into match score (40/30/30 when job has shift_patterns)
-2. Two-Way Ratings trigger — Edge Function 48hrs after job closes
-3. Ready to Work Badge — progressive verification (0-4 score)
-4. Candidate ratings page — rate recruiters after hire/rejection
-5. Bulk Re-Engagement — magic link interest checks for dormant applicants
-6. WhatsApp-Style Status Feed — SMS/push via Edge Functions + Twilio
+## Phase 2 Features
+1. ~~Candidate ratings page~~ — rate recruiters after hire/rejection ✅ (src/pages/candidate/Ratings.tsx, /candidate/ratings)
+2. ~~Two-Way Ratings trigger~~ — Edge Function `ratings-trigger` runs daily; 48hrs after job closes sends magic links to candidates ✅
+3. ~~Bulk Re-Engagement~~ — Edge Function `bulk-reengagement` runs daily; sends magic links to dormant pending applicants (7+ days) ✅
+4. ~~WhatsApp-Style Status Feed~~ — Edge Function `status-feed-sms` runs every 15min; sends SMS via Twilio for shortlisted/rejected/interest events ✅
+
+Deploy: see `supabase/PHASE2_DEPLOY.md`. Schema: `supabase/phase2_schema.sql`. Cron: `supabase/phase2_cron.sql`.

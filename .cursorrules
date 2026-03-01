@@ -145,6 +145,8 @@ C:\Users\tomfo\Documents\HireFast\hirefast-v2\hirefast-v2
 - immediate_start boolean
 - is_active boolean
 - status text
+- closed_at timestamptz
+- ratings_trigger_sent_at timestamptz
 - created_at timestamptz
 
 ### applications
@@ -204,6 +206,7 @@ C:\Users\tomfo\Documents\HireFast\hirefast-v2\hirefast-v2
 - application_id uuid (FK → applications.id)
 - event_type text
 - message text
+- sms_sent_at timestamptz
 - created_at timestamptz
 
 ---
@@ -229,6 +232,9 @@ Matching is case-insensitive exact string comparison.
 - employers: Recruiters ALL (scoped to created_by)
 - jobs: Recruiters ALL (scoped to recruiter_id)
 - recruiter_employers: Users SELECT own, Service role ALL
+- ratings:
+  Candidates SELECT/INSERT own (candidate_id in candidates for auth.uid(); INSERT rated_by = 'candidate')
+  Recruiters SELECT/INSERT (recruiter_id = auth.uid(); INSERT rated_by = 'recruiter')
 
 ---
 
@@ -330,6 +336,8 @@ Matching is case-insensitive exact string comparison.
   Exports: calculateCommuteScore(), backfillCommuteScores()
 - src/lib/matchLogic.ts
   Exports: calculateShiftMatch(), getMatchBreakdown()
+- src/lib/rtwBadge.ts
+  Exports: getRtwScore(), getRtwBadgeLabel(), getRtwBadgeClass() — 0-4 progressive verification
 - src/types/index.ts
   Exports: Candidate, Job, Application, Employer, Rating, ApplicationEvent
 
@@ -352,14 +360,16 @@ Matching is case-insensitive exact string comparison.
 | Shift Preferences | src/pages/candidate/ShiftPreferences.tsx | /candidate/shifts | ✅ v2.0 |
 | Profile Complete | src/pages/candidate/ProfileComplete.tsx | /candidate/profile-complete | ✅ v2.0 |
 | Job Board | src/pages/candidate/JobBoard.tsx | /candidate/jobs | ✅ v2.0 |
+| Applications History | src/pages/candidate/Applications.tsx | /candidate/applications | ✅ v2.0 |
+| Feedback (Ratings) | src/pages/candidate/Ratings.tsx | /candidate/ratings | ✅ v2.0 |
 
 ### Recruiter Flow
 | Page | File | Route | Status |
 |------|------|--------|--------|
-| Login | src/pages/recruiter/Login.tsx | /recruiter/login | ⏳ needs v2.0 |
+| Login | src/pages/recruiter/Login.tsx | /recruiter/login | ✅ v2.0 |
 | Post Job | src/pages/recruiter/PostJob.tsx | /recruiter/post-job | ✅ v2.0 |
 | Manage Applicants | src/pages/recruiter/ManageApplicants.tsx | /recruiter/applicants | ✅ v2.0 |
-| Candidate Profile | src/pages/recruiter/CandidateProfile.tsx | /recruiter/candidate/:id | ⏳ needs v2.0 |
+| Candidate Profile | src/pages/recruiter/CandidateProfile.tsx | /recruiter/candidate/:id | ✅ v2.0 |
 | Ratings | src/pages/recruiter/Ratings.tsx | /recruiter/ratings | ✅ v2.0 |
 
 ### Shared
@@ -367,7 +377,7 @@ Matching is case-insensitive exact string comparison.
 |------|------|--------|--------|
 | Magic Link Handler | src/pages/shared/MagicLinkHandler.tsx | /auth/callback | ✅ |
 | Not Found | src/pages/shared/NotFound.tsx | * | ✅ |
-| Settings | src/pages/shared/Settings.tsx | /settings | ⏳ needs v2.0 |
+| Settings | src/pages/shared/Settings.tsx | /settings | ✅ v2.0 |
 
 ---
 
@@ -413,29 +423,27 @@ Matching is case-insensitive exact string comparison.
 
 ---
 
-## Session Progress
+## Current Status
 - Phase 1: ✅ COMPLETE — full end-to-end flow working
 - Session 1: ✅ COMPLETE — design system v2.0 established
 - Session 2: ✅ COMPLETE — all pages upgraded to v2.0 tokens
+- Session 3: ✅ COMPLETE — Radix a11y, Applications page, shift match, RTW badge, Login/Settings/CandidateProfile v2.0, deployment live
+- **Live:** https://www.hirefast.uk (Vercel + Supabase)
 
-## Session 3 TODO (next)
-1. Candidate application history page (new page)
-2. Ready to Work badge — progressive verification score (0-4)
-3. Fix Radix DialogTitle accessibility warning
-4. Wire calculateShiftMatch() into overall match score
-5. CandidateProfile.tsx — upgrade to v2.0 tokens
-6. Login.tsx — upgrade to v2.0 tokens
-7. Settings.tsx — upgrade to v2.0 tokens
-8. Vercel deploy to hirefast.uk
+## Session 3 — Completed
+1. ~~Fix Radix DialogTitle accessibility warning on apply sheet~~ ✅
+2. ~~Wire calculateShiftMatch() into match scoring~~ ✅
+3. ~~Candidate applications history page (/candidate/applications)~~ ✅
+4. ~~Ready to Work Badge — progressive verification (0-4 score)~~ ✅ (src/lib/rtwBadge.ts)
+5. ~~CandidateProfile.tsx — upgrade to v2.0 tokens~~ ✅
+6. ~~Login.tsx — upgrade to v2.0 tokens~~ ✅
+7. ~~Settings.tsx — upgrade to v2.0 tokens~~ ✅
+8. ~~Deploy to Vercel + hirefast.uk domain~~ ✅ Live at www.hirefast.uk
 
 ---
 
-## Phase 2 Features (not yet built)
-1. Shift Pattern Matching — calculateShiftMatch() already built
-   in matchLogic.ts, ready to wire in
-2. Two-Way Ratings trigger — 48hrs after job closes
-   via Supabase Edge Function
-3. Ready to Work Badge — progressive verification (0-4 score)
-4. Candidate ratings page — rate recruiters after hire/rejection
-5. Bulk Re-Engagement — magic link interest checks for dormant applicants
-6. WhatsApp-Style Status Feed — SMS/push via Edge Functions + Twilio
+## Phase 2 Features
+1. ~~Candidate ratings page~~ ✅ (src/pages/candidate/Ratings.tsx, /candidate/ratings)
+2. ~~Two-Way Ratings trigger~~ ✅ (supabase/functions/ratings-trigger)
+3. ~~Bulk Re-Engagement~~ ✅ (supabase/functions/bulk-reengagement)
+4. ~~WhatsApp-Style Status Feed~~ ✅ (supabase/functions/status-feed-sms). Deploy: supabase/PHASE2_DEPLOY.md

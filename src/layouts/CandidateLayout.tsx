@@ -16,6 +16,9 @@ export default function CandidateLayout() {
             <Link to="/candidate/applications" className="text-[#8494b4] hover:text-white text-sm transition-colors">
               Applications
             </Link>
+            <Link to="/candidate/ratings" className="text-[#8494b4] hover:text-white text-sm transition-colors">
+              Feedback
+            </Link>
             <Link to="/settings" className="text-[#8494b4] hover:text-white text-sm transition-colors">
               Settings
             </Link>

@@ -347,15 +347,13 @@ export function ApplicantsTable({
         <p className="mt-2 text-sm text-[#8494b4]">
           Post a job to start receiving applications
         </p>
-        <Button asChild className="mt-6" variant="outline">
-          <Link
-            to="/recruiter/post-job"
-            className="inline-flex items-center gap-2"
-          >
-            <Briefcase className="h-4 w-4" />
-            Post a Job
-          </Link>
-        </Button>
+        <Link
+          to="/recruiter/post-job"
+          className="mt-6 inline-flex items-center justify-center gap-2 rounded-[10px] bg-[#3b6ef5] px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#4d7ef6] active:scale-[0.98] [color:white] [background-color:#3b6ef5]"
+        >
+          <Briefcase className="h-4 w-4 shrink-0" />
+          <span>Post a Job</span>
+        </Link>
       </div>
     );
   }

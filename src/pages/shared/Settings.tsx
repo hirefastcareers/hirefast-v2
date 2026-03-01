@@ -168,7 +168,7 @@ export default function Settings() {
     setDeactivating(true);
     const { error } = await supabase
       .from("jobs")
-      .update({ is_active: false, status: "inactive" })
+      .update({ is_active: false, status: "inactive", closed_at: new Date().toISOString() })
       .eq("recruiter_id", user.id);
 
     setDeactivating(false);

@@ -8,6 +8,7 @@ import ShiftPreferences from "@/pages/candidate/ShiftPreferences";
 import ProfileComplete from "@/pages/candidate/ProfileComplete";
 import JobBoard from "@/pages/candidate/JobBoard";
 import Applications from "@/pages/candidate/Applications";
+import CandidateRatings from "@/pages/candidate/Ratings";
 import Login from "@/pages/recruiter/Login";
 import PostJob from "@/pages/recruiter/PostJob";
 import ManageApplicants from "@/pages/recruiter/ManageApplicants";
@@ -34,6 +35,7 @@ function App() {
           <Route path="profile-complete" element={<ProfileComplete />} />
           <Route path="jobs" element={<JobBoard />} />
           <Route path="applications" element={<Applications />} />
+          <Route path="ratings" element={<CandidateRatings />} />
         </Route>
 
         <Route path="/recruiter" element={<Outlet />}>

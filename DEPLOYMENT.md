@@ -1,5 +1,13 @@
 # HireFast — Deployment Guide
 
+---
+
+## ⚠️ If you're an AI agent working on this project
+**Read these first before doing anything else:** `HIREFAST_CONTEXT.md` and `.cursorrules`.  
+This file is only the deployment guide. Full project context, schema, and rules are in those two files.
+
+---
+
 **Beginner-friendly, step-by-step.** Each step tells you exactly what to click and where to go.
 
 ---

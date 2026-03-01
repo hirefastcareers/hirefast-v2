@@ -1,0 +1,71 @@
+-- ============================================================
+-- HireFast Phase 2: Schedule Edge Functions with pg_cron
+-- Run this AFTER deploying the Edge Functions and setting up Vault.
+--
+-- Prerequisites:
+-- 1. Extensions: CREATE EXTENSION IF NOT EXISTS pg_cron; CREATE EXTENSION IF NOT EXISTS pg_net;
+-- 2. Store secrets in Vault (run once):
+--    select vault.create_secret('https://YOUR_PROJECT_REF.supabase.co', 'project_url');
+--    select vault.create_secret('YOUR_SERVICE_ROLE_KEY', 'service_role_key');
+-- 3. Replace YOUR_PROJECT_REF and YOUR_SERVICE_ROLE_KEY with real values.
+-- ============================================================
+
+-- Optional: enable extensions (if not already)
+-- CREATE EXTENSION IF NOT EXISTS pg_cron;
+-- CREATE EXTENSION IF NOT EXISTS pg_net;
+
+-- Step 1: Store your project URL and service role key in Vault (run these ONCE):
+-- select vault.create_secret('https://YOUR_PROJECT_REF.supabase.co', 'project_url');
+-- select vault.create_secret('YOUR_SERVICE_ROLE_KEY', 'service_role_key');
+
+-- Step 2: Schedule the Edge Functions (run after Vault is set up):
+
+-- Ratings trigger: daily at 10:00 UTC (48hrs after job close prompts)
+-- select cron.schedule(
+--   'hirefast-ratings-trigger',
+--   '0 10 * * *',
+--   $$
+--   select net.http_post(
+--     url := (select decrypted_secret from vault.decrypted_secrets where name = 'project_url') || '/functions/v1/ratings-trigger',
+--     headers := jsonb_build_object(
+--       'Content-Type', 'application/json',
+--       'Authorization', 'Bearer ' || (select decrypted_secret from vault.decrypted_secrets where name = 'service_role_key')
+--     ),
+--     body := '{}'::jsonb
+--   ) as request_id;
+--   $$
+-- );
+
+-- Bulk re-engagement: daily at 09:00 UTC (dormant applicants)
+-- select cron.schedule(
+--   'hirefast-bulk-reengagement',
+--   '0 9 * * *',
+--   $$
+--   select net.http_post(
+--     url := (select decrypted_secret from vault.decrypted_secrets where name = 'project_url') || '/functions/v1/bulk-reengagement',
+--     headers := jsonb_build_object(
+--       'Content-Type', 'application/json',
+--       'Authorization', 'Bearer ' || (select decrypted_secret from vault.decrypted_secrets where name = 'service_role_key')
+--     ),
+--     body := '{}'::jsonb
+--   ) as request_id;
+--   $$
+-- );
+
+-- Status feed SMS: every 15 minutes (Twilio notifications)
+-- select cron.schedule(
+--   'hirefast-status-feed-sms',
+--   '*/15 * * * *',
+--   $$
+--   select net.http_post(
+--     url := (select decrypted_secret from vault.decrypted_secrets where name = 'project_url') || '/functions/v1/status-feed-sms',
+--     headers := jsonb_build_object(
+--       'Content-Type', 'application/json',
+--       'Authorization', 'Bearer ' || (select decrypted_secret from vault.decrypted_secrets where name = 'service_role_key')
+--     ),
+--     body := '{}'::jsonb
+--   ) as request_id;
+--   $$
+-- );
+
+-- To unschedule: select cron.unschedule('hirefast-ratings-trigger');
