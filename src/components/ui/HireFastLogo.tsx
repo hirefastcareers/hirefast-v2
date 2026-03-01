@@ -42,21 +42,9 @@ export function HireFastLogo({ size = "md", className }: HireFastLogoProps) {
         fontFamily="'DM Sans', sans-serif"
         fontWeight={700}
         fontSize={28}
-        fill="#f0f4ff"
         letterSpacing="-0.02em"
       >
-        Hire
-      </text>
-      <text
-        x={100}
-        y={28}
-        fontFamily="'DM Sans', sans-serif"
-        fontWeight={700}
-        fontSize={28}
-        fill="#3b6ef5"
-        letterSpacing="-0.02em"
-      >
-        Fast
+        <tspan fill="#f0f4ff">Hire</tspan><tspan fill="#3b6ef5">Fast</tspan>
       </text>
     </svg>
   );
