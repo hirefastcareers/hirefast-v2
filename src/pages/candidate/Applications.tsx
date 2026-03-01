@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { Briefcase, Calendar, ChevronRight } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { cn } from "@/lib/utils";
-import type { Application } from "@/types";
 
 /** Minimal sector badge classes for applications list (matches JobBoard sector styling) */
 const SECTOR_BADGE: Record<string, string> = {
@@ -57,14 +56,25 @@ function formatDate(iso: string): string {
 type JobInfo = { id: string; title: string; location_name: string | null; sector: string | null; pay_rate: string | null };
 type EmployerInfo = { company_name: string | null };
 
-export type ApplicationWithDetails = Application & {
-  jobs: JobInfo | null;
-  employers: EmployerInfo | null;
+export type ApplicationWithDetails = {
+  id: string;
+  job_id: string;
+  employer_id: string;
+  status: string;
+  outcome: string | null;
+  match_score: number | null;
+  commute_risk_level: string | null;
+  commute_distance_miles: number | null;
+  journey_time_mins: number | null;
+  created_at: string;
+  jobs?: JobInfo | JobInfo[] | null;
+  employers?: EmployerInfo | EmployerInfo[] | null;
 };
 
 function ApplicationCard({ app }: { app: ApplicationWithDetails }) {
-  const job = app.jobs;
-  const employer = app.employers;
+  // Supabase may return jobs/employers as object or array (PostgREST varies)
+  const job = Array.isArray(app.jobs) ? app.jobs[0] ?? null : app.jobs;
+  const employer = Array.isArray(app.employers) ? app.employers[0] ?? null : app.employers;
   const title = job?.title ?? "Job";
   const company = employer?.company_name ?? "—";
   const sectorClass = getSectorBadgeClass(job?.sector ?? null);
@@ -197,7 +207,7 @@ export default function Applications() {
         return;
       }
 
-      setApplications((rows as ApplicationWithDetails[]) ?? []);
+      setApplications((rows as unknown as ApplicationWithDetails[]) ?? []);
       setLoading(false);
     }
 

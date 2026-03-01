@@ -61,18 +61,17 @@ If your project is not on GitHub yet:
    - **Build Command:** `npm run build` (or `pnpm run build` if you use pnpm)
    - **Output Directory:** `dist`
    - **Install Command:** `npm install`
-5. Before deploying, click **Environment Variables**
-6. Add these two variables (one at a time):
+5. Before deploying, open **Environment Variables** and add these two (Key + Value):
 
-   | Name                    | Value                                  |
+   | Key                     | Value                                  |
    |-------------------------|----------------------------------------|
    | `VITE_SUPABASE_URL`     | Paste your Supabase Project URL        |
    | `VITE_SUPABASE_ANON_KEY`| Paste your Supabase anon public key    |
 
-   Make sure to select **Production**, **Preview**, and **Development** for each.
-7. Click **Deploy**
-8. Wait 1–2 minutes. When it finishes, you'll see a green **Visit** button
-9. Click **Visit** — your app should be live (e.g. `hirefast-v2.vercel.app`)
+   On this screen you may only see Key and Value — that’s fine. Add both, then deploy. (If you later want to limit a variable to Production only, go to **Project** → **Settings** → **Environment Variables** and edit it there; you’ll see Production / Preview / Development checkboxes.)
+6. Click **Deploy**
+7. Wait 1–2 minutes. When it finishes, you'll see a green **Visit** button
+8. Click **Visit** — your app should be live (e.g. `hirefast-v2.vercel.app`)
 
 ---
 

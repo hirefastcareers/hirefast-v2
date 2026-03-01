@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Loader2,
@@ -13,14 +13,9 @@ import {
   UtensilsCrossed,
   Briefcase,
   CheckCircle,
-  LogOut,
-  User,
-  MapPin,
-  Banknote,
   X,
   Navigation,
   Shield,
-  Clock,
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import { cn } from "@/lib/utils";
@@ -39,12 +34,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 const CANDIDATE_POSTCODE_KEY = "hirefast_candidate_postcode";
 const CANDIDATE_AVAILABILITY_KEY = "hirefast_candidate_availability";
@@ -170,12 +159,6 @@ function partialPostcode(postcode: string | null | undefined): string {
   return outward || "—";
 }
 
-function getInitials(name: string): string {
-  const parts = name.trim().split(" ");
-  if (parts.length === 1) return parts[0][0].toUpperCase();
-  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
-}
-
 type JobRow = {
   id: string;
   employer_id: string;
@@ -216,14 +199,6 @@ type JobScore = {
   skillsMatch: number;
   matchedSkills: string[];
 };
-
-function formatDate(iso: string): string {
-  const d = new Date(iso);
-  const day = String(d.getDate()).padStart(2, "0");
-  const month = String(d.getMonth() + 1).padStart(2, "0");
-  const year = d.getFullYear();
-  return `${day}/${month}/${year}`;
-}
 
 function haversineMiles(lat1: number, lon1: number, lat2: number, lon2: number): number {
   const R = 3959;
@@ -576,8 +551,6 @@ export default function JobBoard() {
     setSectorFilter("all");
     setSortBy("best_match");
   };
-
-  const hasActiveFilters = searchQuery.trim() !== "" || sectorFilter !== "all";
 
   const openApplySheet = (job: JobWithCompany) => {
     if (!candidate) {
@@ -978,12 +951,6 @@ export default function JobBoard() {
                             : 0;
                     const overallMatch =
                       score != null ? Math.round((locationScore + score.skillsMatch) / 2) : null;
-                    const matchBadgeClass =
-                      overallMatch != null
-                        ? getMatchBadgeClass(overallMatch)
-                        : "bg-white/5 text-[#6b7fa3] border-white/10";
-                    const matchBadgeLabel =
-                      overallMatch != null ? getMatchBadgeLabel(overallMatch) : "New";
                     const riskColour =
                       score?.riskLevel === "low"
                         ? "text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded-full"
