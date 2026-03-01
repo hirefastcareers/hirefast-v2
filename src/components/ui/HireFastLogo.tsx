@@ -27,10 +27,14 @@ export function HireFastLogo({ size = "md", className }: HireFastLogoProps) {
       className={cn("shrink-0", className)}
       aria-hidden
     >
-      {/* Right-pointing chevron, cap-height tall, vertically centred */}
+      {/* Right-pointing chevron: two strokes meeting at point (like >), cap-height tall */}
       <path
-        d="M 6 10 L 6 30 L 24 20 Z"
-        fill="#3b6ef5"
+        d="M 8 10 L 24 20 L 8 30"
+        fill="none"
+        stroke="#3b6ef5"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
       <text
         x={32}
