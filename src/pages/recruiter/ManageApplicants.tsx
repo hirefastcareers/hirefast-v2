@@ -165,6 +165,40 @@ export default function ManageApplicants() {
     };
   }, []);
 
+  // Realtime: refetch applications when a new one is inserted for this employer
+  useEffect(() => {
+    if (!employerId) return;
+
+    const channel = supabase
+      .channel("applications-insert")
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "applications",
+          filter: `employer_id=eq.${employerId}`,
+        },
+        () => {
+          supabase
+            .from("applications")
+            .select(
+              "id, job_id, employer_id, candidate_id, full_name, email, phone, candidate_postcode, commute_distance_miles, commute_risk_level, journey_time_mins, match_score, status, outcome, has_rtw, created_at, shortlisted_at, jobs(id, title, location_name, sector)"
+            )
+            .eq("employer_id", employerId)
+            .order("match_score", { ascending: false })
+            .then(({ data }) => {
+              if (data) setApplications(data as unknown as ApplicationRow[]);
+            });
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [employerId]);
+
   const filteredAndSorted = applications
     .filter((a) => {
       if (filterJob !== "all" && a.job_id !== filterJob) return false;

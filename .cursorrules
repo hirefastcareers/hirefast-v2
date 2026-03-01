@@ -263,10 +263,10 @@ Matching is case-insensitive exact string comparison.
   Location: low=100, medium=60, high=20
   Skills: matched/required * 100. No required skills = 100
   Fires async after application INSERT — never blocks success screen
+- Applicant list: Realtime subscription on applications (employer_id); new applications appear without refresh. DB: ALTER PUBLICATION supabase_realtime ADD TABLE applications;
 - Candidate sheet: Clicking row in ManageApplicants opens
   Shadcn Sheet (side="right", max-w-2xl). Never navigate away.
-- Postcode privacy: show outward code only (e.g. "S1")
-  Never log or display full postcodes
+- Postcode: recruiter UI shows outward code only. Apply form collects full UK postcode (e.g. S35 2YF), stored for scoring only.
 - Self-declared data: RTW, NI, DBS always labelled "(Self-declared)"
 - Duplicate applications: UNIQUE constraint on (job_id, email)
   Handle 409 as success if application already exists
@@ -429,6 +429,7 @@ Matching is case-insensitive exact string comparison.
 - Session 2: ✅ COMPLETE — all pages upgraded to v2.0 tokens
 - Session 3: ✅ COMPLETE — Radix a11y, Applications page, shift match, RTW badge, Login/Settings/CandidateProfile v2.0, deployment live
 - **Live:** https://www.hirefast.uk (Vercel + Supabase)
+- Realtime on applications; Post Job £ default; apply form full postcode; Applicants empty-state button primary blue
 
 ## Session 3 — Completed
 1. ~~Fix Radix DialogTitle accessibility warning on apply sheet~~ ✅

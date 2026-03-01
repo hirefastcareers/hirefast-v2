@@ -333,6 +333,11 @@ Matching is case-insensitive exact string comparison.
 - Track colour: #1a2438
 - Props: { score: number | null, size?: 'sm' | 'default' }
 
+### Applicant list (Recruiter side) — Realtime
+- ManageApplicants subscribes to Supabase Realtime INSERTs on `applications` (filter: employer_id).
+- New applications appear without refresh. Requires `applications` in Realtime publication:
+  `ALTER PUBLICATION supabase_realtime ADD TABLE applications;`
+
 ### Candidate Sheet (Recruiter side)
 - Clicking a row in ManageApplicants opens Shadcn Sheet
   side="right", max-w-2xl
@@ -343,16 +348,15 @@ Matching is case-insensitive exact string comparison.
 ### Apply Flow (Candidate side)
 - Bottom sheet (Vaul/Shadcn Sheet) — never a centred modal
 - Pre-fills name, phone, postcode from candidate profile
-- Shows outward code only in postcode field
+- Postcode field: candidate enters **full** UK postcode (e.g. S35 2YF), maxLength 8; full value stored for commute scoring
 - RTW status shown as emerald badge "(Self-declared)"
 - On submit: INSERT applications, then async score commute
 - On 409 conflict: treat as success (already applied)
 - Success screen: CheckCircle animation + "Application Sent!"
 
 ### Postcode Privacy
-- Never display full postcode in UI anywhere
-- Display only: postcode.trim().split(' ')[0]
-- Full postcode stored in DB for scoring only
+- Recruiter-facing UI: never display full postcode — show outward code only (e.g. postcode.trim().split(' ')[0])
+- Apply form: candidate inputs full postcode; full stored in DB for scoring only
 
 ### Self-Declared Data
 - RTW, NI, DBS always labelled "(Self-declared)"
@@ -461,6 +465,8 @@ Matching is case-insensitive exact string comparison.
 - Session 2: ✅ COMPLETE — all pages upgraded to v2.0 tokens
 - Session 3: ✅ Complete — Radix a11y, Applications page, shift match, RTW badge, Login/Settings/CandidateProfile v2.0, deployment live
 - **Live:** https://www.hirefast.uk (Vercel + Supabase)
+- Realtime: applications table in supabase_realtime; recruiter Applicants list auto-updates on new application
+- Post Job: pay rate field defaults to £. Apply form: full UK postcode input (e.g. S35 2YF). Applicants empty-state "Post a Job" button: primary blue (v2.0)
 
 ---
 

@@ -749,10 +749,11 @@ export default function JobBoard() {
                 <Input
                   id="apply-postcode"
                   type="text"
-                  value={partialPostcode(applyForm.postcode) || ""}
-                  onChange={(e) => setApplyForm((f) => ({ ...f, postcode: e.target.value.toUpperCase().trim() }))}
+                  value={applyForm.postcode}
+                  onChange={(e) => setApplyForm((f) => ({ ...f, postcode: e.target.value.toUpperCase() }))}
                   className="w-full bg-[#141d2e] border border-[#243352] rounded-[10px] px-4 py-3 text-white text-sm font-mono placeholder:text-[#6b7fa3] focus:outline-none focus:border-[#3b6ef5] transition-colors"
-                  placeholder="e.g. LS10"
+                  placeholder="e.g. S35 2YF"
+                  maxLength={8}
                 />
               </div>
 

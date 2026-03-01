@@ -95,7 +95,7 @@ export default function PostJob() {
   const [sector, setSector] = useState<SectorKey | null>(null);
   const [locationName, setLocationName] = useState<string>("");
   const [postcode, setPostcode] = useState<string>("");
-  const [payRate, setPayRate] = useState<string>("");
+  const [payRate, setPayRate] = useState<string>("£");
   const [commuteThresholdMins, setCommuteThresholdMins] =
     useState<number>(DEFAULT_COMMUTE_MINS);
   const [requiredSkills, setRequiredSkills] = useState<string[]>([]);
@@ -362,7 +362,7 @@ export default function PostJob() {
               type="text"
               value={payRate}
               onChange={(e) => setPayRate(e.target.value)}
-              placeholder="e.g. £12.50/hr or £28,000/yr"
+              placeholder="e.g. 12.50/hr or 28,000/yr"
               className="w-full rounded-[10px] border border-[#1f2d47] bg-[#141d2e] px-4 py-3 text-white placeholder:text-[#4d5f7a] focus:border-[#3b6ef5] focus:outline-none focus:ring-1 focus:ring-[#3b6ef5]"
               autoComplete="off"
             />
