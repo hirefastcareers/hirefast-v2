@@ -309,6 +309,7 @@ export default function ManageApplicants() {
 
   const updateStatus = useCallback(
     async (applicationId: string, newStatus: "shortlisted" | "rejected") => {
+      if (!employerId) return;
       const prev = applications.map((a) =>
         a.id === applicationId
           ? {
@@ -330,14 +331,15 @@ export default function ManageApplicants() {
       const { error } = await supabase
         .from("applications")
         .update(payload)
-        .eq("id", applicationId);
+        .eq("id", applicationId)
+        .eq("employer_id", employerId);
 
       if (error) {
         setApplications(applications);
         showToast(error.message || "Update failed. Please try again.");
       }
     },
-    [applications, showToast]
+    [applications, employerId, showToast]
   );
 
   const activeJobsForFilter = jobs.map((j) => ({ value: j.id, label: j.title }));

@@ -1,5 +1,5 @@
 # HireFast — Cursor Rules
-# Last updated: Realtime, apply postcode, Post Job £, docs — 01/03/2026
+# Last updated: Query scope audit, ManageApplicants fix, QUERY_SCOPE_AUDIT.md — 01/03/2026
 
 ---
 ## Agent Reminder
@@ -214,6 +214,11 @@ C:\Users\tomfo\Documents\HireFast\hirefast-v2\hirefast-v2
 - sms_sent_at timestamptz
 - created_at timestamptz
 
+### job_views (Session 7 — Job performance dashboard)
+- id uuid PK
+- job_id uuid NOT NULL (FK → jobs.id ON DELETE CASCADE)
+- viewed_at timestamptz NOT NULL DEFAULT now()
+
 ---
 
 ## Shift & Availability Array Format
@@ -240,6 +245,19 @@ Matching is case-insensitive exact string comparison.
 - ratings:
   Candidates SELECT/INSERT own (candidate_id in candidates for auth.uid(); INSERT rated_by = 'candidate')
   Recruiters SELECT/INSERT (recruiter_id = auth.uid(); INSERT rated_by = 'recruiter')
+- job_views:
+  INSERT only when job is active (WITH CHECK EXISTS jobs.id = job_id AND jobs.is_active = true)
+  SELECT only for recruiter’s own jobs (USING EXISTS jobs.id = job_views.job_id AND jobs.recruiter_id = auth.uid())
+
+---
+
+## Supabase query scoping (tenant isolation)
+Every Supabase data query that reads/updates recruiter or employer data MUST be scoped by employer_id or recruiter_id so one tenant cannot see or change another’s data. Candidate flows correctly scope by candidate_id or user_id.
+- Full audit: supabase/QUERY_SCOPE_AUDIT.md (per-file, per-query).
+- Recruiter application updates: always include .eq("employer_id", employerId) (e.g. ManageApplicants updateStatus, bulk actions, CandidateProfile, CandidateSheet).
+- Recruiter job queries: .eq("recruiter_id", user.id) where appropriate.
+- Queries that only filter by id (e.g. application_events by application_id) rely on RLS; ensure RLS policies enforce tenant isolation.
+- Edge functions use service role and intentionally cross tenants for batch jobs; no app-level scope required.
 
 ---
 
@@ -412,7 +430,7 @@ Matching is case-insensitive exact string comparison.
 7. Supabase client — always import from src/lib/supabase.ts
 8. Icons — lucide-react only
 9. Friction is the enemy — max 5 fields recruiters, max 3 fields candidates
-10. RLS always — every query scoped to correct user
+10. RLS always — every query scoped to correct user. Recruiter/employer queries must filter by employer_id or recruiter_id; see supabase/QUERY_SCOPE_AUDIT.md.
 11. GDPR — consent language wherever data is collected
 12. Self-declared — RTW, NI, DBS always labelled clearly
 13. No CV required — entry-level roles apply without CV
