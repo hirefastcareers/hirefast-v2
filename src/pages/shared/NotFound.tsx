@@ -3,10 +3,10 @@ import { cn } from "@/lib/utils";
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen bg-[#0f1624] text-white p-6 flex flex-col items-center justify-center">
-      <div className="max-w-md rounded-xl border border-[#2a3a5c] bg-[#141f33] p-8 text-center">
+    <div className="min-h-screen bg-[#090d16] text-white p-6 flex flex-col items-center justify-center">
+      <div className="max-w-md rounded-[14px] border border-[#1f2d47] bg-[#0f1522] p-8 text-center">
         <h1 className="text-2xl font-bold mb-2">Page not found</h1>
-        <p className="text-[#6b7fa3] text-sm mb-6">
+        <p className="text-[#8494b4] text-sm mb-6">
           The page you're looking for doesn't exist or has been moved.
         </p>
         <Link

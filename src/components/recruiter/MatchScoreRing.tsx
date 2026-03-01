@@ -52,13 +52,13 @@ export default function MatchScoreRing({ score, size = "default" }: MatchScoreRi
               cy={60}
               r={RADIUS}
               strokeWidth={8}
-              stroke="#2a3a5c"
+              stroke="#1a2438"
               fill="none"
             />
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className={`font-bold tabular-nums text-slate-400 ${isSm ? "text-[10px]" : "text-2xl"}`}>—</span>
-            {!isSm && <span className="text-xs font-medium text-slate-500">Unscored</span>}
+            <span className={`font-mono font-bold tabular-nums text-[#8494b4] ${isSm ? "text-[10px]" : "text-2xl"}`}>—</span>
+            {!isSm && <span className="text-xs font-medium text-[#4d5f7a]">Unscored</span>}
           </div>
         </div>
       </div>
@@ -82,7 +82,7 @@ export default function MatchScoreRing({ score, size = "default" }: MatchScoreRi
             cy={60}
             r={RADIUS}
             strokeWidth={8}
-            stroke="#2a3a5c"
+            stroke="#1a2438"
             fill="none"
           />
           <g transform="rotate(-90 60 60)">
@@ -103,7 +103,7 @@ export default function MatchScoreRing({ score, size = "default" }: MatchScoreRi
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <div className="flex items-baseline gap-0.5">
-            <span className={`font-bold tabular-nums text-white ${textSizeClass}`}>
+            <span className={`font-mono font-bold tabular-nums text-white ${textSizeClass}`}>
               {score}
             </span>
             {!isSm && <span className="text-sm text-white">%</span>}

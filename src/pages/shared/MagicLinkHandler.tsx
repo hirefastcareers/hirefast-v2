@@ -95,14 +95,14 @@ export default function MagicLinkHandler() {
   // Resolving: skeleton immediately on mount — never blank. Dark navy theme.
   if (status === "resolving") {
     return (
-      <div className="min-h-screen bg-[#0f1624] text-white flex flex-col items-center justify-center px-4">
-        <div className="w-full max-w-md rounded-[12px] border border-[#2a3a5c] bg-[#141f33] p-8 flex flex-col items-center gap-6">
+      <div className="min-h-screen bg-[#090d16] text-white flex flex-col items-center justify-center px-4">
+        <div className="w-full max-w-md rounded-[12px] border border-[#1f2d47] bg-[#0f1522] p-8 flex flex-col items-center gap-6">
           <span className="font-bold text-xl">
             <span className="text-white">Hire</span>
             <span className="text-[#3b6ef5]">Fast</span>
           </span>
           <Loader2 className="h-10 w-10 text-[#3b6ef5] animate-spin" aria-hidden />
-          <p className="text-[#6b7fa3] text-sm">Signing you in...</p>
+          <p className="text-[#8494b4] text-sm">Signing you in...</p>
         </div>
       </div>
     );
@@ -111,16 +111,16 @@ export default function MagicLinkHandler() {
   // Expired: show message + button to recruiter login
   if (status === "expired") {
     return (
-      <div className="min-h-screen bg-[#0f1624] text-white flex flex-col items-center justify-center px-4">
-        <div className="w-full max-w-md rounded-[12px] border border-[#2a3a5c] bg-[#141f33] p-8 text-center">
+      <div className="min-h-screen bg-[#090d16] text-white flex flex-col items-center justify-center px-4">
+        <div className="w-full max-w-md rounded-[12px] border border-[#1f2d47] bg-[#0f1522] p-8 text-center">
           <p className="text-white font-medium mb-2">Link expired</p>
-          <p className="text-[#6b7fa3] text-sm mb-6">
+          <p className="text-[#8494b4] text-sm mb-6">
             This sign-in link has expired or has already been used. Request a
             new one below.
           </p>
           <Link
             to="/recruiter/login"
-            className="inline-block w-full py-3.5 rounded-xl font-medium text-white bg-[#3b6ef5] hover:opacity-90 active:scale-[0.98] transition text-center"
+            className="inline-block w-full py-3.5 rounded-[10px] font-medium text-white bg-[#3b6ef5] hover:opacity-90 active:scale-[0.98] transition text-center"
           >
             Back to recruiter login
           </Link>
@@ -132,15 +132,15 @@ export default function MagicLinkHandler() {
   // Error: e.g. candidate INSERT failed — retry registration
   if (status === "error") {
     return (
-      <div className="min-h-screen bg-[#0f1624] text-white flex flex-col items-center justify-center px-4">
-        <div className="w-full max-w-md rounded-[12px] border border-[#2a3a5c] bg-[#141f33] p-8 text-center">
+      <div className="min-h-screen bg-[#090d16] text-white flex flex-col items-center justify-center px-4">
+        <div className="w-full max-w-md rounded-[12px] border border-[#1f2d47] bg-[#0f1522] p-8 text-center">
           <p className="text-white font-medium mb-2">Something went wrong</p>
-          <p className="text-[#6b7fa3] text-sm mb-6">
+          <p className="text-[#8494b4] text-sm mb-6">
             We couldn&apos;t complete your sign-in. Your details are still saved — try again below.
           </p>
           <Link
             to="/candidate/register"
-            className="inline-block w-full py-3.5 rounded-xl font-medium text-white bg-[#3b6ef5] hover:opacity-90 active:scale-[0.98] transition text-center"
+            className="inline-block w-full py-3.5 rounded-[10px] font-medium text-white bg-[#3b6ef5] hover:opacity-90 active:scale-[0.98] transition text-center"
           >
             Continue to registration
           </Link>
@@ -151,12 +151,12 @@ export default function MagicLinkHandler() {
 
   // Redirecting (recruiter or candidate): keep showing spinner until navigate completes
   return (
-    <div className="min-h-screen bg-[#0f1624] text-white flex flex-col items-center justify-center px-4">
+    <div className="min-h-screen bg-[#090d16] text-white flex flex-col items-center justify-center px-4">
       <div
         className="h-10 w-10 rounded-full border-2 border-[#3b6ef5] border-t-transparent animate-spin"
         aria-hidden
       />
-      <p className="text-[#6b7fa3] text-sm mt-4">Redirecting…</p>
+      <p className="text-[#8494b4] text-sm mt-4">Redirecting…</p>
     </div>
   );
 }
