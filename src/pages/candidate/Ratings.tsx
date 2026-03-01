@@ -7,7 +7,6 @@ import {
   Loader2,
   Briefcase,
 } from "lucide-react";
-import CandidateLayout from "@/layouts/CandidateLayout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -237,8 +236,7 @@ export default function CandidateRatings() {
   }, []);
 
   return (
-    <CandidateLayout>
-      <div className="mx-auto max-w-2xl px-4 py-6">
+    <div className="mx-auto max-w-2xl px-4 py-6">
         {toast && (
           <div
             className="fixed bottom-4 left-4 right-4 z-50 rounded-[10px] border border-[#1f2d47] bg-[#0f1522] px-4 py-3 text-sm text-[#f0f4ff] shadow-lg md:left-1/2 md:right-auto md:max-w-sm md:-translate-x-1/2"
@@ -349,7 +347,6 @@ export default function CandidateRatings() {
           </TabsContent>
         </Tabs>
       </div>
-    </CandidateLayout>
   );
 }
 
