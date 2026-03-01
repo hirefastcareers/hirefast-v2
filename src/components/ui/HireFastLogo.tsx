@@ -1,42 +1,43 @@
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils'
 
-const TEXT_CLASS = { sm: "text-lg", md: "text-2xl", lg: "text-4xl" } as const;
+interface HireFastLogoProps {
+  size?: 'sm' | 'md' | 'lg'
+  className?: string
+}
 
-type HireFastLogoProps = {
-  size?: "sm" | "md" | "lg";
-  className?: string;
-};
+export function HireFastLogo({ size = 'md', className }: HireFastLogoProps) {
+  const textSize = size === 'sm' ? '18px' : size === 'lg' ? '36px' : '24px'
+  const chevronSize = size === 'sm' ? '16px' : size === 'lg' ? '32px' : '21px'
+  const strokeWidth = size === 'sm' ? '2' : size === 'lg' ? '3.5' : '2.5'
 
-/**
- * HireFast wordmark: chevron + "Hire" (#f0f4ff) + "Fast" (#3b6ef5).
- * Wordmark is HTML text so DM Sans renders correctly.
- */
-export function HireFastLogo({ size = "md", className }: HireFastLogoProps) {
   return (
-    <div
-      className={cn("flex items-center gap-[0.35em]", className)}
-      aria-hidden
-    >
+    <div className={cn('flex items-center gap-[6px]', className)}>
       <svg
-        viewBox="0 0 10 16"
-        height="0.85em"
-        width="auto"
+        width={chevronSize}
+        height={chevronSize}
+        viewBox="0 0 24 24"
         fill="none"
         stroke="#3b6ef5"
-        strokeWidth="2.5"
+        strokeWidth={strokeWidth}
         strokeLinecap="round"
         strokeLinejoin="round"
-        className="shrink-0"
       >
-        <polyline points="2,1 9,8 2,15" />
+        <polyline points="9,4 17,12 9,20" />
       </svg>
       <span
-        className={cn("font-bold tracking-tight leading-none", TEXT_CLASS[size])}
-        style={{ fontFamily: "DM Sans, sans-serif" }}
+        style={{
+          fontFamily: 'DM Sans, sans-serif',
+          fontSize: textSize,
+          fontWeight: 700,
+          lineHeight: 1,
+          letterSpacing: '-0.02em',
+        }}
       >
-        <span style={{ color: "#f0f4ff" }}>Hire</span>
-        <span style={{ color: "#3b6ef5" }}>Fast</span>
+        <span style={{ color: '#f0f4ff' }}>Hire</span>
+        <span style={{ color: '#3b6ef5' }}>Fast</span>
       </span>
     </div>
-  );
+  )
 }
+
+export default HireFastLogo
