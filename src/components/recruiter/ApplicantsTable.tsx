@@ -275,7 +275,7 @@ export function ApplicantsTable({
           return (
             <div className="flex items-center gap-1.5">
               <MatchScoreRing score={score} size="sm" />
-              <span className="text-sm tabular-nums text-white">
+              <span className="text-sm font-mono tabular-nums text-white">
                 {score != null ? `${score}%` : "—"}
               </span>
             </div>
@@ -313,8 +313,8 @@ export function ApplicantsTable({
         cell: ({ row }) => {
           const at = row.original.last_contacted_at;
           return (
-            <span className="text-sm tabular-nums text-[#8494b4]">
-              {at ? formatDate(at) : "—"}
+<span className="text-sm font-mono tabular-nums text-[#8494b4]">
+            {at ? formatDate(at) : "—"}
             </span>
           );
         },
@@ -341,7 +341,7 @@ export function ApplicantsTable({
         header: "Applied",
         enableSorting: true,
         cell: ({ row }) => (
-          <span className="text-sm tabular-nums text-[#8494b4]">
+          <span className="text-sm font-mono tabular-nums text-[#8494b4]">
             {formatDate(row.original.created_at)}
           </span>
         ),
@@ -440,10 +440,10 @@ className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-[#849
   if (applications.length === 0) {
     return (
       <div className="rounded-[14px] border border-[#1f2d47] bg-[#0f1522] p-12 flex flex-col items-center justify-center text-center">
-        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#1a2438] mb-4">
-          <Inbox className="h-8 w-8 text-[#8494b4]" />
+        <div className="flex h-[52px] w-[52px] items-center justify-center rounded-[14px] bg-[#141d2e] border border-[#1f2d47] mb-4">
+          <Inbox className="h-6 w-6 text-[#8494b4]" />
         </div>
-        <h2 className="text-lg font-semibold text-white">No applicants yet</h2>
+        <h2 className="text-[20px] font-semibold text-white">No applicants yet</h2>
         <p className="mt-2 text-sm text-[#8494b4]">
           Post a job to start receiving applications
         </p>

@@ -85,6 +85,7 @@ Core value proposition: speed and zero friction.
 - Use `<HireFastLogo />` from `@/components/ui/HireFastLogo` in all nav bars (size="md").
 - Use the logo on landing page heroes (size="lg").
 - Never use a text-based "Hire" / "Fast" wordmark anywhere in the app.
+- Favicon: `public/favicon.svg` — chevron mark (same as logo), stroke #3b6ef5 on bg #090d16. index.html: `<link rel="icon" type="image/svg+xml" href="/favicon.svg" />`. Do not use vite.svg.
 
 ---
 

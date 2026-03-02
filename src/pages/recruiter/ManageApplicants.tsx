@@ -364,7 +364,7 @@ export default function ManageApplicants() {
         {/* Header */}
         <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-white tracking-tight">Applicants</h1>
+            <h1 className="text-[26px] font-semibold tracking-tight text-[#f0f4ff]">Applicants</h1>
             <p className="mt-1 text-sm text-[#8494b4]">
               {loading ? "…" : `${totalApplicants} applicants across ${jobCount} active jobs`}
             </p>
@@ -457,7 +457,7 @@ export default function ManageApplicants() {
               <Users className="h-4 w-4" />
               <span className="text-sm">Total Applicants</span>
             </div>
-            <p className="mt-1 text-2xl font-bold tracking-tight tabular-nums text-white">
+            <p className="mt-1 text-2xl font-bold tracking-tight font-mono tabular-nums text-white">
               {loading ? "—" : totalApplicants}
             </p>
           </div>
@@ -467,7 +467,7 @@ export default function ManageApplicants() {
               <TrendingUp className="h-4 w-4" />
               <span className="text-sm">Strong Matches</span>
             </div>
-            <p className="mt-1 text-2xl font-bold tracking-tight tabular-nums text-white">
+            <p className="mt-1 text-2xl font-bold tracking-tight font-mono tabular-nums text-white">
               {loading ? "—" : strongMatches}
             </p>
           </div>
@@ -477,7 +477,7 @@ export default function ManageApplicants() {
               <UserCheck className="h-4 w-4" />
               <span className="text-sm">Shortlisted</span>
             </div>
-            <p className="mt-1 text-2xl font-bold tracking-tight tabular-nums text-white">
+            <p className="mt-1 text-2xl font-bold tracking-tight font-mono tabular-nums text-white">
               {loading ? "—" : shortlistedCount}
             </p>
           </div>
@@ -487,7 +487,7 @@ export default function ManageApplicants() {
               <CircleDot className="h-4 w-4" />
               <span className="text-sm">Avg Match Score</span>
             </div>
-            <p className="mt-1 text-2xl font-bold tracking-tight tabular-nums text-white">
+            <p className="mt-1 text-2xl font-bold tracking-tight font-mono tabular-nums text-white">
               {loading ? "—" : `${avgMatch}%`}
             </p>
           </div>
@@ -498,7 +498,7 @@ export default function ManageApplicants() {
           <div className="mb-4 rounded-[14px] border border-[#1f2d47] bg-[#0f1522] p-4">
             {bulkProgress ? (
               <div className="flex flex-col gap-2">
-                <p className="text-sm text-[#8494b4] tabular-nums">
+                <p className="text-sm text-[#8494b4] font-mono tabular-nums">
                   Sending interest check… {bulkProgress.current} / {bulkProgress.total}
                 </p>
                 <div className="h-2 w-full overflow-hidden rounded-full bg-[#1a2438]">
@@ -513,7 +513,7 @@ export default function ManageApplicants() {
             ) : (
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <p className="text-sm text-[#8494b4]">
-                  <span className="font-semibold tabular-nums text-white">{selectedIds.size}</span> selected
+                  <span className="font-semibold font-mono tabular-nums text-white">{selectedIds.size}</span> selected
                 </p>
                 <div className="flex flex-wrap gap-2">
                   <button

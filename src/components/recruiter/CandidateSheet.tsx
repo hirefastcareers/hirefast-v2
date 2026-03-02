@@ -390,7 +390,7 @@ export function CandidateSheet({
                   {getInitials(application.full_name)}
                 </div>
                 <div className="min-w-0">
-                  <SheetTitle className="text-xl font-bold text-white">
+                  <SheetTitle className="text-[20px] font-semibold text-white">
                     {application.full_name ?? "Unknown"}
                   </SheetTitle>
                   <p className="text-sm text-[#8494b4] mt-0.5">{job?.title ?? "—"}</p>
@@ -525,13 +525,13 @@ export function CandidateSheet({
                 <div className="flex items-center divide-x divide-[#1f2d47]">
                   <div className="flex-1 pr-4 text-center">
                     <p className="text-xs uppercase tracking-wider text-[#8494b4]">Applied</p>
-                    <p className="text-lg font-bold tabular-nums text-white mt-0.5">
+                    <p className="text-lg font-bold font-mono tabular-nums text-white mt-0.5">
                       {formatDate(application.created_at)}
                     </p>
                   </div>
                   <div className="flex-1 px-4 text-center">
                     <p className="text-xs uppercase tracking-wider text-[#8494b4]">Distance</p>
-                    <p className="text-lg font-bold tabular-nums text-white mt-0.5">
+                    <p className="text-lg font-bold font-mono tabular-nums text-white mt-0.5">
                       {application.commute_distance_miles != null
                         ? `${application.commute_distance_miles} miles`
                         : "—"}
@@ -539,7 +539,7 @@ export function CandidateSheet({
                   </div>
                   <div className="flex-1 pl-4 text-center">
                     <p className="text-xs uppercase tracking-wider text-[#8494b4]">Journey</p>
-                    <p className="text-lg font-bold tabular-nums text-white mt-0.5">
+                    <p className="text-lg font-bold font-mono tabular-nums text-white mt-0.5">
                       {application.journey_time_mins != null
                         ? `${application.journey_time_mins} min`
                         : "—"}

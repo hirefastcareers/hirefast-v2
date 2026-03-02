@@ -12,7 +12,7 @@ import {
   BadgeCheck,
   CreditCard,
 } from "lucide-react";
-import { HireFastLogo } from "@/components/ui/HireFastLogo";
+import { HireFastLogo } from '@/components/ui/HireFastLogo'
 
 export default function RecruiterLanding() {
   const scrollToHowItWorks = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -42,6 +42,7 @@ export default function RecruiterLanding() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* 2. Hero Section */}
       <section className="pt-12 pb-16 md:pt-20 md:pb-24 max-w-4xl">
+        <HireFastLogo size="lg" className="mb-6" />
         <h1 className="text-3xl font-bold leading-tight mb-4 md:text-4xl lg:text-5xl">
           Post a Job in 30 Seconds. Hire in Days.
         </h1>
@@ -69,7 +70,7 @@ export default function RecruiterLanding() {
 
       {/* 3. Problem Section */}
       <section className="pb-16">
-        <h2 className="text-2xl font-bold text-center mb-8 md:text-3xl">
+        <h2 className="text-[20px] font-semibold text-center mb-8 md:text-[20px]">
           Sound familiar?
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-5xl mx-auto">
@@ -114,7 +115,7 @@ export default function RecruiterLanding() {
 
       {/* 4. Solution Section */}
       <section className="pb-16">
-        <h2 className="text-2xl font-bold text-center mb-8 md:text-3xl">
+        <h2 className="text-[20px] font-semibold text-center mb-8 md:text-[20px]">
           HireFast fixes all of it
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-5xl mx-auto">
@@ -162,7 +163,7 @@ export default function RecruiterLanding() {
         id="how-it-works"
         className="pb-16 scroll-mt-20"
       >
-        <h2 className="text-2xl font-bold text-center mb-8 md:text-3xl">
+        <h2 className="text-[20px] font-semibold text-center mb-8 md:text-[20px]">
           From post to hire in three steps
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-5xl mx-auto">
@@ -215,16 +216,16 @@ export default function RecruiterLanding() {
 
       {/* 6. Social Proof Bar */}
       <section className="pb-16">
-        <h2 className="text-2xl font-bold text-center mb-8 md:text-3xl">
+        <h2 className="text-[20px] font-semibold text-center mb-8 md:text-[20px]">
           Trusted by recruiters across the UK
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-4xl mx-auto">
           <div className="rounded-[14px] border border-[#1f2d47] bg-[#0f1522] p-6 text-center">
-            <p className="text-[#3b6ef5] font-bold text-2xl mb-1">30 Seconds</p>
+            <p className="text-[#3b6ef5] font-bold text-2xl mb-1 font-mono tabular-nums">30 Seconds</p>
             <p className="text-[#8494b4] text-sm">Average job post time</p>
           </div>
           <div className="rounded-[14px] border border-[#1f2d47] bg-[#0f1522] p-6 text-center">
-            <p className="text-[#3b6ef5] font-bold text-2xl mb-1">72%</p>
+            <p className="text-[#3b6ef5] font-bold text-2xl mb-1 font-mono tabular-nums">72%</p>
             <p className="text-[#8494b4] text-sm">
               Reduction in irrelevant applications
             </p>
@@ -240,7 +241,7 @@ export default function RecruiterLanding() {
 
       {/* 7. Pricing */}
       <section className="pb-16">
-        <h2 className="text-2xl font-bold text-center mb-8 md:text-3xl">
+        <h2 className="text-[20px] font-semibold text-center mb-8 md:text-[20px]">
           Simple, transparent pricing
         </h2>
         <p className="text-[#8494b4] text-center mb-10 max-w-xl mx-auto">
@@ -255,7 +256,7 @@ export default function RecruiterLanding() {
               <CreditCard className="w-5 h-5 text-[#3b6ef5]" />
             </div>
             <h3 className="font-semibold text-white text-xl mb-1">Free</h3>
-            <p className="text-[#3b6ef5] font-bold text-2xl mb-4">£0</p>
+            <p className="text-[#3b6ef5] font-bold text-2xl mb-4 font-mono tabular-nums">£0</p>
             <ul className="text-[#8494b4] text-sm space-y-2">
               <li>1 active job</li>
               <li>30-second apply flow for candidates</li>
@@ -274,7 +275,7 @@ export default function RecruiterLanding() {
               <Sparkles className="w-5 h-5 text-[#3b6ef5]" />
             </div>
             <h3 className="font-semibold text-white text-xl mb-1">Pro</h3>
-            <p className="text-white font-bold text-2xl mb-4 tabular-nums">£49<span className="text-[#8494b4] font-normal text-base">/mo</span></p>
+            <p className="text-white font-bold text-2xl mb-4 font-mono tabular-nums">£49<span className="text-[#8494b4] font-normal text-base">/mo</span></p>
             <ul className="text-[#8494b4] text-sm space-y-2">
               <li>5–10 active jobs</li>
               <li>Job performance dashboard</li>
@@ -294,7 +295,7 @@ export default function RecruiterLanding() {
               <Users className="w-5 h-5 text-[#3b6ef5]" />
             </div>
             <h3 className="font-semibold text-white text-xl mb-1">Agency</h3>
-            <p className="text-white font-bold text-2xl mb-4 tabular-nums">£149<span className="text-[#8494b4] font-normal text-base">/mo</span></p>
+            <p className="text-white font-bold text-2xl mb-4 font-mono tabular-nums">£149<span className="text-[#8494b4] font-normal text-base">/mo</span></p>
             <ul className="text-[#8494b4] text-sm space-y-2">
               <li>25+ active jobs</li>
               <li>Multi-recruiter & branding</li>
@@ -314,7 +315,7 @@ export default function RecruiterLanding() {
       {/* 8. CTA Banner */}
       <section className="py-16">
         <div className="max-w-3xl mx-auto rounded-[14px] border border-[#1f2d47] bg-gradient-to-br from-[#090d16] to-[#1a2744] p-8 md:p-12 text-center">
-          <h2 className="text-2xl font-bold mb-3 md:text-3xl">
+          <h2 className="text-[20px] font-semibold mb-3 md:text-[20px]">
             Post your first job free
           </h2>
           <p className="text-[#8494b4] mb-8 max-w-lg mx-auto">

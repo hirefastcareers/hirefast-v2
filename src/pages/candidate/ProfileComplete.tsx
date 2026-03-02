@@ -63,7 +63,7 @@ export default function ProfileComplete() {
             />
           </div>
 
-          <h1 className="text-xl font-bold text-white text-center">
+          <h1 className="text-[26px] font-semibold tracking-tight text-[#f0f4ff] text-center">
             Your profile is live 🎉
           </h1>
           <p className="text-[#8494b4] text-sm mt-2 mb-6 text-center">

@@ -3,6 +3,7 @@ import { Mail, Send } from "lucide-react";
 import { motion } from "framer-motion";
 import { supabase } from "@/lib/supabase";
 import RecruiterLayout from "@/layouts/RecruiterLayout";
+import { HireFastLogo } from '@/components/ui/HireFastLogo'
 
 const RESEND_COOLDOWN_SECONDS = 30;
 
@@ -78,10 +79,9 @@ export default function Login() {
         transition={{ duration: 0.35, ease: "easeOut" }}
       >
         {/* Wordmark */}
-        <h1 className="text-2xl font-bold text-center mb-1 tracking-tight">
-          <span className="text-[#f0f4ff]">Hire</span>
-          <span className="text-[#3b6ef5]">Fast</span>
-        </h1>
+        <div className="flex justify-center mb-1">
+          <HireFastLogo size="lg" />
+        </div>
         <p className="text-[#8494b4] text-sm text-center mb-6">
           Recruiter Portal
         </p>

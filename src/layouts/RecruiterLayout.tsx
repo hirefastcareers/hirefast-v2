@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Outlet, Link, useLocation } from "react-router-dom";
 import { PlusCircle, Users, BarChart3, Star, Settings2, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { HireFastLogo } from "@/components/ui/HireFastLogo";
+import { HireFastLogo } from '@/components/ui/HireFastLogo'
 
 const NAV_LINKS = [
   { to: "/recruiter/post-job", label: "Post Job", icon: PlusCircle },
@@ -126,7 +126,7 @@ export default function RecruiterLayout({
 
       <main className="max-w-5xl mx-auto px-4 py-8">
         {title && (
-          <h1 className="mb-6 text-2xl font-bold text-white">{title}</h1>
+          <h1 className="mb-6 text-[26px] font-semibold tracking-tight text-[#f0f4ff]">{title}</h1>
         )}
         {content}
       </main>

@@ -256,7 +256,7 @@ export default function PostJob() {
 
       <div className="rounded-[14px] border border-[#1f2d47] bg-[#0f1522] p-6 md:p-8 max-w-2xl mx-auto">
         <header className="mb-6">
-          <h1 className="text-2xl font-bold text-white">Post a Job</h1>
+          <h1 className="text-[26px] font-semibold tracking-tight text-[#f0f4ff]">Post a Job</h1>
           <p className="mt-1 text-sm text-[#8494b4]">
             Fill in the details below — sector templates do the heavy lifting
           </p>

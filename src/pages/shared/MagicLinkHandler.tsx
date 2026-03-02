@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
-import { HireFastLogo } from "@/components/ui/HireFastLogo";
+import { HireFastLogo } from '@/components/ui/HireFastLogo'
 
 type Status = "resolving" | "recruiter" | "candidate" | "expired" | "error";
 
@@ -118,7 +118,7 @@ export default function MagicLinkHandler() {
           </p>
           <Link
             to="/recruiter/login"
-            className="inline-block w-full py-3.5 rounded-[10px] font-medium text-white bg-[#3b6ef5] hover:opacity-90 active:scale-[0.98] transition text-center"
+            className="inline-block w-full py-3.5 rounded-[10px] font-semibold text-white bg-[#3b6ef5] hover:opacity-90 active:scale-[0.98] transition text-center"
           >
             Back to recruiter login
           </Link>
@@ -138,7 +138,7 @@ export default function MagicLinkHandler() {
           </p>
           <Link
             to="/candidate/register"
-            className="inline-block w-full py-3.5 rounded-[10px] font-medium text-white bg-[#3b6ef5] hover:opacity-90 active:scale-[0.98] transition text-center"
+            className="inline-block w-full py-3.5 rounded-[10px] font-semibold text-white bg-[#3b6ef5] hover:opacity-90 active:scale-[0.98] transition text-center"
           >
             Continue to registration
           </Link>

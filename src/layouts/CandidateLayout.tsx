@@ -1,5 +1,5 @@
 import { Outlet, Link } from "react-router-dom";
-import { HireFastLogo } from "@/components/ui/HireFastLogo";
+import { HireFastLogo } from '@/components/ui/HireFastLogo'
 
 export default function CandidateLayout() {
   return (

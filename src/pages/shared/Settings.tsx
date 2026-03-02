@@ -294,7 +294,7 @@ export default function Settings() {
     return (
       <RecruiterLayout>
         <div className="space-y-2">
-          <h1 className="text-2xl font-bold text-[#f0f4ff]">Settings</h1>
+          <h1 className="text-[26px] font-semibold tracking-tight text-[#f0f4ff]">Settings</h1>
           <p className="text-sm text-[#8494b4]">Manage your account and employer profile</p>
         </div>
         <div className="mt-6">
@@ -321,13 +321,13 @@ export default function Settings() {
               {toast}
             </div>
           )}
-          <h1 className="text-2xl font-bold text-[#f0f4ff] tracking-tight">Settings</h1>
+          <h1 className="text-[26px] font-semibold tracking-tight text-[#f0f4ff]">Settings</h1>
           <p className="text-sm text-[#8494b4] mt-1">Manage your account and CV</p>
 
           <section className="mt-6 rounded-[14px] border border-[#1f2d47] bg-[#0f1522] p-5">
             <div className="mb-4 flex items-center gap-2">
               <User className="h-5 w-5 text-[#8494b4]" />
-              <h2 className="font-medium text-[#f0f4ff]">Account</h2>
+              <h2 className="text-[20px] font-semibold text-[#f0f4ff]">Account</h2>
             </div>
             <div className="space-y-3">
               <div>
@@ -378,7 +378,7 @@ export default function Settings() {
           <section className="mt-6 rounded-[14px] border border-[#1f2d47] bg-[#0f1522] p-5">
             <div className="mb-4 flex items-center gap-2">
               <FileText className="h-5 w-5 text-[#8494b4]" />
-              <h2 className="font-medium text-[#f0f4ff]">CV (optional)</h2>
+              <h2 className="text-[20px] font-semibold text-[#f0f4ff]">CV (optional)</h2>
             </div>
             <p className="text-sm text-[#8494b4] mb-4">
               Not required for entry-level roles. Upload if you want recruiters to see it for skilled positions.
@@ -442,7 +442,7 @@ export default function Settings() {
         )}
 
         <header className="mb-6">
-          <h1 className="text-2xl font-bold text-[#f0f4ff]">Settings</h1>
+          <h1 className="text-[26px] font-semibold tracking-tight text-[#f0f4ff]">Settings</h1>
           <p className="mt-1 text-sm text-[#8494b4]">
             Manage your account and employer profile
           </p>
@@ -458,7 +458,7 @@ export default function Settings() {
           >
             <div className="mb-4 flex items-center gap-2">
               <User className="h-5 w-5 text-[#8494b4]" />
-              <h2 className="font-medium text-[#f0f4ff]">Account</h2>
+              <h2 className="text-[20px] font-semibold text-[#f0f4ff]">Account</h2>
             </div>
             <div className="space-y-3">
               <div>
@@ -474,7 +474,7 @@ export default function Settings() {
               </div>
               <div>
                 <p className="text-sm text-[#8494b4]">Member since</p>
-                <p className="text-sm text-[#f0f4ff]">{formatDateDDMMYYYY(userCreatedAt ?? undefined)}</p>
+                <p className="text-sm font-mono tabular-nums text-[#f0f4ff]">{formatDateDDMMYYYY(userCreatedAt ?? undefined)}</p>
               </div>
             </div>
             <div className="mt-5">
@@ -521,7 +521,7 @@ export default function Settings() {
             <div className="mb-4 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Building2 className="h-5 w-5 text-[#8494b4]" />
-                <h2 className="font-medium text-[#f0f4ff]">Employer Profile</h2>
+                <h2 className="text-[20px] font-semibold text-[#f0f4ff]">Employer Profile</h2>
               </div>
               {!employerEditing && employer && (
                 <Button
@@ -693,7 +693,7 @@ export default function Settings() {
           >
             <div className="mb-4 flex items-center gap-2">
               <AlertTriangle className="h-5 w-5 text-rose-400" />
-              <h2 className="font-medium text-rose-400">Danger Zone</h2>
+              <h2 className="text-[20px] font-semibold text-rose-400">Danger Zone</h2>
             </div>
 
             <div className="space-y-5">

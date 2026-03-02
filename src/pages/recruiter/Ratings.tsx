@@ -241,7 +241,7 @@ export default function Ratings() {
       )}
 
       <header>
-        <h1 className="text-2xl font-bold text-white">Ratings</h1>
+        <h1 className="text-[26px] font-semibold tracking-tight text-[#f0f4ff]">Ratings</h1>
         <p className="mt-1 text-sm text-[#6b7fa3]">
           Rate candidates and view your recruiter reputation
         </p>
@@ -262,7 +262,7 @@ export default function Ratings() {
                 <div className="mt-2">
                   <StarRating value={displayAvg} readOnly size="sm" />
                 </div>
-                <p className="mt-1 text-xl font-bold tabular-nums text-white">
+                <p className="mt-1 text-xl font-bold font-mono tabular-nums text-white">
                   {displayAvg.toFixed(1)} / 5
                 </p>
                 <p className="text-xs text-[#8494b4]">
@@ -281,7 +281,7 @@ export default function Ratings() {
             ) : (
               <div className="mt-2 flex items-center gap-2">
                 <UserCheck className="h-6 w-6 shrink-0 text-[#3b6ef5]" />
-                <span className="text-2xl font-bold tabular-nums text-white">
+                <span className="text-2xl font-bold font-mono tabular-nums text-white">
                   {ratingsGiven.length}
                 </span>
               </div>
@@ -508,7 +508,7 @@ function RateCandidateCard({
       </div>
 
       <Button
-        className="mt-3 w-full rounded-[10px] bg-[#3b6ef5] text-white hover:bg-[#4d7ef6]"
+        className="mt-3 w-full rounded-[10px] bg-[#3b6ef5] font-semibold text-white hover:bg-[#4d7ef6]"
         disabled={score === 0 || submitting}
         onClick={handleSubmit}
       >

@@ -477,7 +477,7 @@ export default function CandidateProfile() {
           animate={{ opacity: 1, y: 0 }}
           className="rounded-[14px] border border-[#1f2d47] bg-[#0f1522] p-8 text-center"
         >
-          <h2 className="text-xl font-semibold text-[#f0f4ff]">Application not found</h2>
+          <h2 className="text-[20px] font-semibold text-[#f0f4ff]">Application not found</h2>
           <p className="mt-2 text-sm text-[#8494b4]">
             This application may have been removed or you don’t have access.
           </p>
@@ -553,7 +553,7 @@ export default function CandidateProfile() {
                       {getInitials(application?.full_name ?? null)}
                     </div>
                     <div className="min-w-0">
-                      <h1 className="text-2xl font-bold text-[#f0f4ff]">
+                      <h1 className="text-[26px] font-semibold tracking-tight text-[#f0f4ff]">
                         {application?.full_name ?? "Unknown"}
                       </h1>
                       <p className="mt-1 text-sm text-[#8494b4]">
@@ -570,13 +570,13 @@ export default function CandidateProfile() {
                 <div className="mt-5 flex items-center divide-x divide-[#1f2d47] border-t border-[#1f2d47] pt-4">
                   <div className="flex-1 pr-4 text-center sm:text-left">
                     <p className="text-xs text-[#8494b4]">Applied</p>
-                    <p className="mt-0.5 text-sm font-medium tabular-nums text-[#f0f4ff]">
+                    <p className="mt-0.5 text-sm font-medium font-mono tabular-nums text-[#f0f4ff]">
                       {application ? formatDate(application.created_at) : "—"}
                     </p>
                   </div>
                   <div className="flex-1 px-4 text-center">
                     <p className="text-xs text-[#8494b4]">Distance</p>
-                    <p className="mt-0.5 text-sm font-medium tabular-nums text-[#f0f4ff]">
+                    <p className="mt-0.5 text-sm font-medium font-mono tabular-nums text-[#f0f4ff]">
                       {application?.commute_distance_miles != null
                         ? `${application.commute_distance_miles} mi`
                         : "—"}
@@ -584,7 +584,7 @@ export default function CandidateProfile() {
                   </div>
                   <div className="flex-1 pl-4 text-center sm:text-right">
                     <p className="text-xs text-[#8494b4]">Journey</p>
-                    <p className="mt-0.5 text-sm font-medium tabular-nums text-[#f0f4ff]">
+                    <p className="mt-0.5 text-sm font-medium font-mono tabular-nums text-[#f0f4ff]">
                       {application?.journey_time_mins != null
                         ? `${application.journey_time_mins} min`
                         : "—"}
@@ -600,7 +600,7 @@ export default function CandidateProfile() {
                 transition={{ duration: 0.3, delay: 0.08 }}
                 className="rounded-[14px] border border-[#1f2d47] bg-[#0f1522] p-5 transition-colors duration-200 hover:border-[#3b6ef5]/40"
               >
-                <h2 className="flex items-center gap-2 text-lg font-semibold text-[#f0f4ff]">
+                <h2 className="flex items-center gap-2 text-[20px] font-semibold text-[#f0f4ff]">
                   <BarChart2 className="h-5 w-5 text-[#8494b4]" />
                   Why this score?
                 </h2>
@@ -715,7 +715,7 @@ export default function CandidateProfile() {
                 transition={{ duration: 0.3, delay: 0.16 }}
                 className="rounded-[14px] border border-[#1f2d47] bg-[#0f1522] p-5 transition-colors duration-200 hover:border-[#3b6ef5]/40"
               >
-                <h2 className="flex items-center gap-2 text-lg font-semibold text-[#f0f4ff]">
+                <h2 className="flex items-center gap-2 text-[20px] font-semibold text-[#f0f4ff]">
                   <Shield className="h-5 w-5 text-[#8494b4]" />
                   Compliance & Eligibility
                 </h2>
@@ -797,7 +797,7 @@ export default function CandidateProfile() {
                 transition={{ duration: 0.3, delay: 0.24 }}
                 className="rounded-[14px] border border-[#1f2d47] bg-[#0f1522] p-5 transition-colors duration-200 hover:border-[#3b6ef5]/40"
               >
-                <h2 className="flex items-center gap-2 text-lg font-semibold text-[#f0f4ff]">
+                <h2 className="flex items-center gap-2 text-[20px] font-semibold text-[#f0f4ff]">
                   <Clock className="h-5 w-5 text-[#8494b4]" />
                   Application History
                 </h2>
@@ -913,7 +913,7 @@ export default function CandidateProfile() {
                 transition={{ duration: 0.3, delay: 0.16 }}
                 className="rounded-[14px] border border-[#1f2d47] bg-[#0f1522] p-5 transition-colors duration-200 hover:border-[#3b6ef5]/40"
               >
-                <h2 className="text-lg font-semibold text-[#f0f4ff]">Contact</h2>
+                <h2 className="text-[20px] font-semibold text-[#f0f4ff]">Contact</h2>
                 <ul className="mt-4 space-y-3 text-sm">
                   {phone && (
                     <li className="group flex items-center gap-2">

@@ -5,7 +5,7 @@ import {
   Zap,
   Star,
 } from "lucide-react";
-import { HireFastLogo } from "@/components/ui/HireFastLogo";
+import { HireFastLogo } from '@/components/ui/HireFastLogo'
 
 const SECTORS = [
   "Logistics",
@@ -46,6 +46,7 @@ export default function CandidateLanding() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* 2. Hero Section */}
       <section className="pt-12 pb-16 md:pt-20 md:pb-24 max-w-4xl">
+        <HireFastLogo size="lg" className="mb-6" />
         <h1 className="text-3xl font-bold leading-tight mb-4 md:text-4xl lg:text-5xl">
           Find Your Next Job in 30 Seconds
         </h1>
@@ -74,7 +75,7 @@ export default function CandidateLanding() {
       <section className="pb-16">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-4xl mx-auto">
           <div className="rounded-[14px] border border-[#1f2d47] bg-[#0f1522] p-5">
-            <p className="text-[#3b6ef5] font-bold text-xl mb-1">30 Seconds</p>
+            <p className="text-[#3b6ef5] font-bold text-xl mb-1 font-mono tabular-nums">30 Seconds</p>
             <p className="text-[#8494b4] text-sm">Average application time</p>
           </div>
           <div className="rounded-[14px] border border-[#1f2d47] bg-[#0f1522] p-5">
@@ -98,7 +99,7 @@ export default function CandidateLanding() {
         className="py-16 bg-[#0f1522]/50 rounded-[14px]"
       >
         <div className="max-w-4xl">
-          <h2 className="text-2xl font-bold mb-10 md:text-3xl">
+          <h2 className="text-[20px] font-semibold mb-10 md:text-[20px]">
             Three steps to your next job
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -145,7 +146,7 @@ export default function CandidateLanding() {
       {/* 5. Sector Pills */}
       <section className="py-16">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-2xl font-bold mb-6 md:text-3xl">
+          <h2 className="text-[20px] font-semibold mb-6 md:text-[20px]">
             Roles available in
           </h2>
           <div className="flex flex-wrap gap-3">
@@ -164,7 +165,7 @@ export default function CandidateLanding() {
       {/* 6. Candidate Testimonials */}
       <section className="py-16">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-2xl font-bold mb-10 md:text-3xl">
+          <h2 className="text-[20px] font-semibold mb-10 md:text-[20px]">
             What candidates say
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -209,7 +210,7 @@ export default function CandidateLanding() {
       {/* 7. CTA Banner */}
       <section className="py-16 bg-[#090d16] bg-gradient-to-b from-[#0f1522] to-[#090d16] rounded-[14px]">
         <div className="max-w-2xl mx-auto text-center">
-          <h2 className="text-2xl font-bold mb-6 md:text-3xl lg:text-4xl">
+          <h2 className="text-[20px] font-semibold mb-6 md:text-[20px]">
             Ready to find work faster?
           </h2>
           <Link

@@ -738,7 +738,7 @@ export default function JobBoard() {
     return (
       <>
         <SheetHeader className="p-0 pb-4 mb-5 border-b border-[#1f2d47] text-left">
-          <SheetTitle className="text-xl font-bold text-[#f0f4ff]">
+          <SheetTitle className="text-[20px] font-semibold text-[#f0f4ff]">
             Apply to {applyJob.title}
           </SheetTitle>
           <div className="flex flex-wrap items-center gap-2 mt-2">
@@ -827,7 +827,7 @@ export default function JobBoard() {
 
               <Button
                 type="button"
-                className="w-full bg-[#3b6ef5] hover:bg-[#2952cc] text-white font-semibold py-4 rounded-xl flex items-center justify-center gap-2 transition-colors duration-200 text-base"
+                className="w-full bg-[#3b6ef5] hover:bg-[#2952cc] text-white font-semibold py-4 rounded-[10px] flex items-center justify-center gap-2 transition-colors duration-200 text-base"
                 onClick={handleApplySubmit}
                 disabled={applySubmitting}
               >
@@ -853,7 +853,7 @@ export default function JobBoard() {
               transition={{ type: "spring", stiffness: 300, damping: 24 }}
             >
               <CheckCircle className="w-16 h-16 text-emerald-400 mx-auto mb-4" aria-hidden />
-              <h3 className="text-white text-xl font-bold">Application Sent!</h3>
+              <h3 className="text-white text-[20px] font-semibold">Application Sent!</h3>
               <p className="text-[#6b7fa3] text-sm mt-2">
                 We've notified the recruiter. You'll hear back within 24 hours.
               </p>
@@ -882,7 +882,7 @@ export default function JobBoard() {
       <main className="w-full pb-12">
         <div className="w-full px-4 sm:px-6 py-4 max-w-7xl mx-auto">
           <div className="mb-6 max-w-2xl mx-auto w-full">
-            <h1 className="text-2xl font-bold text-white tracking-tight">
+            <h1 className="text-[26px] font-semibold tracking-tight text-[#f0f4ff]">
               {candidate ? "Top matches for you" : "Available Jobs"}
             </h1>
             <p className="text-[#8494b4] text-sm mt-1">
@@ -898,7 +898,7 @@ export default function JobBoard() {
           {candidate && !loading && (
             <div className="mb-6 max-w-2xl mx-auto w-full space-y-4">
               <div className="rounded-[14px] border border-[#1f2d47] bg-[#0f1522] p-4">
-                <h2 className="text-sm font-semibold text-[#f0f4ff] tracking-tight mb-3">
+                <h2 className="text-[20px] font-semibold text-[#f0f4ff] tracking-tight mb-3">
                   Your best matches today
                 </h2>
                 <div className="flex flex-col gap-2">
@@ -961,7 +961,7 @@ export default function JobBoard() {
               {recentApplications.length > 0 && (
                 <div className="rounded-[14px] border border-[#1f2d47] bg-[#0f1522] p-4">
                   <div className="flex items-center justify-between mb-3">
-                    <h2 className="text-sm font-semibold text-[#f0f4ff] tracking-tight">Applied</h2>
+                    <h2 className="text-[20px] font-semibold text-[#f0f4ff] tracking-tight">Applied</h2>
                     <Link
                       to="/candidate/applications"
                       className="text-xs font-medium text-[#3b6ef5] hover:text-[#4d7ef6]"
@@ -1010,7 +1010,7 @@ export default function JobBoard() {
               )}
 
               <div className="rounded-[14px] border border-[#1f2d47] bg-[#0f1522] p-4">
-                <h2 className="text-sm font-semibold text-[#f0f4ff] tracking-tight mb-2">
+                <h2 className="text-[20px] font-semibold text-[#f0f4ff] tracking-tight mb-2">
                   Ready to Work
                 </h2>
                 {(() => {
@@ -1139,10 +1139,12 @@ export default function JobBoard() {
 
             {!loading && !error && filteredAndSortedJobs.length === 0 && (
               <div className="rounded-[14px] border border-[#1f2d47] bg-[#0f1522] p-10 text-center max-w-4xl mx-auto">
-                <Briefcase className="w-12 h-12 text-white/20 mx-auto mb-3" aria-hidden />
-                <p className="text-white font-medium">No jobs found</p>
-                <p className="text-[#6b7fa3] text-sm mt-1">Try adjusting your filters</p>
-                <Button variant="ghost" className="mt-4" onClick={clearFilters}>
+                <div className="flex h-[52px] w-[52px] items-center justify-center rounded-[14px] bg-[#141d2e] border border-[#1f2d47] mx-auto mb-4">
+                  <Briefcase className="w-6 h-6 text-[#8494b4]" aria-hidden />
+                </div>
+                <p className="font-semibold text-white">No jobs found</p>
+                <p className="text-[#8494b4] text-sm mt-2">Try adjusting your filters or check back later.</p>
+                <Button onClick={clearFilters} className="mt-6 rounded-[10px] bg-[#3b6ef5] font-semibold text-white hover:bg-[#4d7ef6]">
                   Clear filters
                 </Button>
               </div>
@@ -1215,7 +1217,7 @@ export default function JobBoard() {
                                             strokeDasharray={`${(overallMatch / 100) * 100.53} 100.53`}
                                           />
                                         </svg>
-                                        <span className="absolute text-[11px] font-semibold tabular-nums"
+                                        <span className="absolute text-[11px] font-semibold font-mono tabular-nums"
                                           style={{ color: overallMatch >= 80 ? "#34d399" : overallMatch >= 60 ? "#fbbf24" : "#fb7185" }}>
                                           {overallMatch}%
                                         </span>

@@ -131,7 +131,7 @@ export default function JobPerformance() {
       >
         <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-white tracking-tight">
+            <h1 className="text-[26px] font-semibold tracking-tight text-[#f0f4ff]">
               Job performance
             </h1>
             <p className="mt-1 text-sm text-[#8494b4]">
@@ -155,9 +155,11 @@ export default function JobPerformance() {
           </div>
         ) : rows.length === 0 ? (
           <div className="rounded-[14px] border border-[#1f2d47] bg-[#0f1522] p-12 text-center">
-            <BarChart3 className="w-12 h-12 text-[#8494b4] mx-auto mb-3" />
-            <p className="text-white font-medium">No jobs yet</p>
-            <p className="text-sm text-[#8494b4] mt-1">
+            <div className="flex h-[52px] w-[52px] items-center justify-center rounded-[14px] bg-[#141d2e] border border-[#1f2d47] mx-auto mb-4">
+              <BarChart3 className="w-6 h-6 text-[#8494b4]" />
+            </div>
+            <p className="font-semibold text-white">No jobs yet</p>
+            <p className="text-sm text-[#8494b4] mt-2">
               Post a job to see performance here
             </p>
             <Link

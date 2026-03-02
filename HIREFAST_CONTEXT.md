@@ -78,6 +78,7 @@ The core value proposition is speed and zero friction —
 - Text-2: #8494b4 (metadata, labels — never pure white)
 - Text-3: #4d5f7a (placeholders, tertiary info)
 - Brand logo: Use `<HireFastLogo />` (src/components/ui/HireFastLogo.tsx) in all nav bars (size="md") and on landing page heroes (size="lg"). Never use a text-based "Hire" / "Fast" wordmark anywhere in the app.
+- Favicon: `public/favicon.svg` — chevron mark (same as HireFastLogo), stroke #3b6ef5 on bg #090d16. index.html references `/favicon.svg`. Do not use vite.svg.
 
 ### Border Radius
 - Cards and table wrappers: rounded-[14px]

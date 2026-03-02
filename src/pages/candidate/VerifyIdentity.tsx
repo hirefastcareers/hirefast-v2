@@ -108,7 +108,7 @@ export default function VerifyIdentity() {
 
         {/* Card */}
         <div className="w-full max-w-[440px] rounded-[14px] border border-[#1f2d47] bg-[#0f1522] p-6">
-          <h1 className="text-xl font-bold text-white">
+          <h1 className="text-[26px] font-semibold tracking-tight text-[#f0f4ff]">
             Let&apos;s verify you
           </h1>
           <p className="text-[#8494b4] text-sm mt-1 mb-6">

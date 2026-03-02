@@ -9,7 +9,7 @@ export default function WaitlistConfirmation() {
         <div className="flex justify-center mb-4">
           <CheckCircle2 className="h-14 w-14 text-[#3b6ef5]" aria-hidden />
         </div>
-        <h1 className="text-2xl font-bold mb-2">You're on the list</h1>
+        <h1 className="text-[26px] font-semibold tracking-tight text-[#f0f4ff] mb-2">You&apos;re on the list</h1>
         <p className="text-[#8494b4] text-sm mb-6">
           Thanks for joining the HireFast waitlist. We'll be in touch soon.
         </p>
@@ -26,7 +26,7 @@ export default function WaitlistConfirmation() {
         <Link
           to="/"
           className={cn(
-            "block w-full py-4 rounded-lg font-medium text-white text-center",
+            "block w-full py-4 rounded-[10px] font-semibold text-white text-center",
             "bg-[#3b6ef5] hover:opacity-90 active:scale-[0.98] transition"
           )}
         >

@@ -220,7 +220,7 @@ export default function Applications() {
   if (loading) {
     return (
       <div className="px-4 py-6 max-w-[480px] mx-auto">
-        <h1 className="text-xl font-semibold text-[#f0f4ff] tracking-tight mb-1">
+        <h1 className="text-[26px] font-semibold tracking-tight text-[#f0f4ff] mb-1">
           My applications
         </h1>
         <p className="text-sm text-[#8494b4] mb-6">
@@ -238,7 +238,7 @@ export default function Applications() {
   if (error) {
     return (
       <div className="px-4 py-6 max-w-[480px] mx-auto">
-        <h1 className="text-xl font-semibold text-[#f0f4ff] tracking-tight mb-1">
+        <h1 className="text-[26px] font-semibold tracking-tight text-[#f0f4ff] mb-1">
           My applications
         </h1>
         <p className="text-sm text-rose-400 mt-4">{error}</p>
@@ -254,7 +254,7 @@ export default function Applications() {
 
   return (
     <div className="px-4 py-6 max-w-[480px] mx-auto">
-      <h1 className="text-xl font-semibold text-[#f0f4ff] tracking-tight mb-1">
+      <h1 className="text-[26px] font-semibold tracking-tight text-[#f0f4ff] mb-1">
         My applications
       </h1>
       <p className="text-sm text-[#8494b4] mb-6">
@@ -263,12 +263,14 @@ export default function Applications() {
 
       {applications.length === 0 ? (
         <div className="rounded-[14px] border border-[#1f2d47] bg-[#0f1522] p-8 text-center">
-          <Briefcase className="w-12 h-12 mx-auto text-[#4d5f7a] mb-4" aria-hidden />
-          <h2 className="font-semibold text-[#f0f4ff] mb-2">
+          <div className="flex h-[52px] w-[52px] items-center justify-center rounded-[14px] bg-[#141d2e] border border-[#1f2d47] mx-auto mb-4">
+            <Briefcase className="w-6 h-6 text-[#8494b4]" aria-hidden />
+          </div>
+          <h2 className="text-[20px] font-semibold text-[#f0f4ff] mb-2">
             No applications yet
           </h2>
           <p className="text-sm text-[#8494b4] mb-6">
-            You haven't applied to any jobs. Find roles that match your location and skills.
+            You haven&apos;t applied to any jobs. Find roles that match your location and skills.
           </p>
           <Link
             to="/candidate/jobs"

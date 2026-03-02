@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Shield, Lock, Clock } from "lucide-react";
 import { supabase } from "@/lib/supabase";
-import { HireFastLogo } from "@/components/ui/HireFastLogo";
+import { HireFastLogo } from '@/components/ui/HireFastLogo'
 
 export default function Register() {
   const [fullName, setFullName] = useState<string>("");
@@ -109,7 +109,7 @@ export default function Register() {
             </div>
           ) : (
             <>
-              <h1 className="text-xl font-bold text-white md:text-2xl">
+              <h1 className="text-[26px] font-semibold tracking-tight text-[#f0f4ff]">
                 Create your profile
               </h1>
               <p className="text-[#8494b4] text-sm mt-1 mb-6">
