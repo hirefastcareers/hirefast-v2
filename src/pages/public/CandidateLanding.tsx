@@ -56,7 +56,7 @@ export default function CandidateLanding() {
         </p>
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
           <Link
-            to="/candidate/jobs"
+            to="/jobs"
             className="inline-flex justify-center items-center py-4 px-8 rounded-[10px] font-semibold text-white bg-[#3b6ef5] hover:opacity-90 active:scale-[0.98] transition-all text-lg"
           >
             Find Jobs Now

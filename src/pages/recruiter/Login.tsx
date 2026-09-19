@@ -1,26 +1,39 @@
 import { useState, useEffect } from "react";
 import { Mail, Send } from "lucide-react";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
-import RecruiterLayout from "@/layouts/RecruiterLayout";
-import { HireFastLogo } from '@/components/ui/HireFastLogo'
+import RecruiterShell from "@/layouts/RecruiterShell";
+import { HireFastLogo } from "@/components/ui/HireFastLogo";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const RESEND_COOLDOWN_SECONDS = 30;
 
 export default function Login() {
-  const [email, setEmail] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<boolean>(false);
-  const [successEmail, setSuccessEmail] = useState<string>("");
-  const [resendCountdown, setResendCountdown] = useState<number>(0);
+  const [success, setSuccess] = useState(false);
+  const [successEmail, setSuccessEmail] = useState("");
+  const [resendCountdown, setResendCountdown] = useState(0);
 
-  // Countdown for "Resend link" button
   useEffect(() => {
     if (resendCountdown <= 0) return;
     const t = setInterval(() => setResendCountdown((c) => c - 1), 1000);
     return () => clearInterval(t);
   }, [resendCountdown]);
+
+  async function sendOtp(trimmed: string) {
+    return supabase.auth.signInWithOtp({
+      email: trimmed,
+      options: {
+        shouldCreateUser: false,
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,13 +45,9 @@ export default function Login() {
     }
     setLoading(true);
     try {
-      const { error: otpError } = await supabase.auth.signInWithOtp({
-        email: trimmed,
-        options: { emailRedirectTo: window.location.origin + "/auth/callback" },
-      });
+      const { error: otpError } = await sendOtp(trimmed);
       if (otpError) {
         setError(otpError.message);
-        setLoading(false);
         return;
       }
       setSuccessEmail(trimmed);
@@ -56,10 +65,7 @@ export default function Login() {
     setError(null);
     setLoading(true);
     try {
-      const { error: otpError } = await supabase.auth.signInWithOtp({
-        email: successEmail,
-        options: { emailRedirectTo: window.location.origin + "/auth/callback" },
-      });
+      const { error: otpError } = await sendOtp(successEmail);
       if (otpError) setError(otpError.message);
       else setResendCountdown(RESEND_COOLDOWN_SECONDS);
     } catch (err) {
@@ -70,119 +76,96 @@ export default function Login() {
   };
 
   return (
-    <RecruiterLayout showNav={false}>
+    <RecruiterShell showNav={false}>
       <div className="flex flex-col items-center justify-center py-8">
         <motion.div
-        className="w-full max-w-md rounded-[14px] border border-[#1f2d47] bg-[#0f1522] p-6 md:p-8"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.35, ease: "easeOut" }}
-      >
-        {/* Wordmark */}
-        <div className="flex justify-center mb-1">
-          <HireFastLogo size="lg" />
-        </div>
-        <p className="text-[#8494b4] text-sm text-center mb-6">
-          Recruiter Portal
-        </p>
-
-        {success ? (
-          <div className="text-center">
-            <p className="text-[#f0f4ff] font-medium mb-2">Check your inbox</p>
-            <p className="text-[#8494b4] text-sm mb-2">
-              We&apos;ve sent a sign-in link to{" "}
-              <span className="text-[#f0f4ff] font-medium">{successEmail}</span>
-            </p>
-            <p className="text-[#8494b4] text-sm mb-6">
-              Click the link in the email to sign in to the recruiter dashboard.
-            </p>
-            {resendCountdown > 0 ? (
-              <p className="text-[#8494b4] text-sm">
-                Resend link available in {resendCountdown}s
-              </p>
-            ) : (
-              <button
-                type="button"
-                onClick={handleResend}
-                disabled={loading}
-                className="w-full py-3 rounded-[10px] font-medium text-[#3b6ef5] border border-[#3b6ef5] hover:bg-[#3b6ef5]/10 active:scale-[0.98] transition disabled:opacity-70 disabled:pointer-events-none"
-              >
-                {loading ? (
-                  <span className="inline-flex items-center justify-center gap-2">
-                    <span
-                      className="h-4 w-4 rounded-full border-2 border-[#3b6ef5] border-t-transparent animate-spin shrink-0"
-                      aria-hidden
-                    />
-                    Sending…
-                  </span>
-                ) : (
-                  "Resend link"
-                )}
-              </button>
-            )}
-            {error && (
-              <p className="text-sm text-red-400 mt-3" role="alert">
-                {error}
-              </p>
-            )}
+          className="w-full max-w-md rounded-xl border border-slate-200 bg-white p-6 shadow-sm md:p-8"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.18 }}
+        >
+          <div className="mb-1 flex justify-center">
+            <HireFastLogo size="lg" />
           </div>
-        ) : (
-          <>
+          <p className="mb-6 text-center text-sm text-slate-500">Recruiter portal</p>
+
+          {success ? (
+            <div className="text-center">
+              <p className="mb-2 font-medium text-slate-900">Check your inbox</p>
+              <p className="mb-2 text-sm text-slate-500">
+                We&apos;ve sent a sign-in link to{" "}
+                <span className="font-medium text-slate-900">{successEmail}</span>
+              </p>
+              <p className="mb-6 text-sm text-slate-500">
+                Click the link in the email to sign in. No password — ever.
+              </p>
+              {resendCountdown > 0 ? (
+                <p className="text-sm text-slate-500">
+                  Resend available in{" "}
+                  <span className="tabular-nums">{resendCountdown}</span>s
+                </p>
+              ) : (
+                <Button
+                  type="button"
+                  size="lg"
+                  variant="outline"
+                  className="rounded-xl"
+                  disabled={loading}
+                  onClick={() => void handleResend()}
+                >
+                  Resend link
+                </Button>
+              )}
+              {error && (
+                <p className="mt-3 text-sm text-rose-700" role="alert">
+                  {error}
+                </p>
+              )}
+            </div>
+          ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label htmlFor="recruiter-email" className="sr-only">
-                  Email address
-                </label>
+              <div className="space-y-1.5">
+                <Label htmlFor="recruiter-email">Work email</Label>
                 <div className="relative">
-                  <Mail
-                    className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#4d5f7a] pointer-events-none"
-                    aria-hidden
-                  />
-                  <input
+                  <Mail className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-slate-400" />
+                  <Input
                     id="recruiter-email"
                     type="email"
+                    autoComplete="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    className="h-11 rounded-xl pl-9"
                     placeholder="you@company.com"
-                    autoComplete="email"
-                    disabled={loading}
-                    className="w-full rounded-[10px] border border-[#1f2d47] bg-[#141d2e] pl-12 pr-4 py-3.5 text-[#f0f4ff] placeholder:text-[#4d5f7a] focus:border-[#3b6ef5] focus:outline-none focus:ring-2 focus:ring-[#3b6ef5]/20"
+                    required
                   />
                 </div>
-                {error && (
-                  <p className="text-sm text-red-400 mt-2" role="alert">
-                    {error}
-                  </p>
-                )}
               </div>
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full py-3.5 rounded-[10px] font-semibold text-white bg-[#3b6ef5] hover:bg-[#4d7ef6] active:scale-[0.98] transition disabled:opacity-70 disabled:pointer-events-none inline-flex items-center justify-center gap-2 text-lg"
-              >
-                {loading ? (
-                  <>
-                    <span
-                      className="h-5 w-5 rounded-full border-2 border-white border-t-transparent animate-spin"
-                      aria-hidden
-                    />
-                    Sending…
-                  </>
-                ) : (
-                  <>
-                    <Send className="w-5 h-5" aria-hidden />
-                    Send Magic Link
-                  </>
-                )}
-              </button>
+              {error && (
+                <p className="rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700" role="alert">
+                  {error}
+                </p>
+              )}
+              <motion.div whileTap={{ scale: 0.98 }}>
+                <Button
+                  type="submit"
+                  size="lg"
+                  disabled={loading}
+                  className="h-12 w-full rounded-xl bg-blue-600 text-white hover:bg-blue-700"
+                >
+                  <Send className="size-4" />
+                  {loading ? "Sending…" : "Send magic link"}
+                </Button>
+              </motion.div>
+              <p className="text-center text-xs text-slate-500">
+                Recruiters must already have an organisation invite.{" "}
+                <Link to="/recruiters" className="text-blue-600 underline">
+                  Learn more
+                </Link>
+              </p>
             </form>
-            <p className="text-[#8494b4] text-sm text-center mt-6">
-              No password needed. We&apos;ll email you a secure sign-in link.
-            </p>
-          </>
-        )}
+          )}
         </motion.div>
       </div>
-    </RecruiterLayout>
+    </RecruiterShell>
   );
 }

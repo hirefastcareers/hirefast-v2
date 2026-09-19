@@ -110,7 +110,7 @@ function SkeletonCard() {
 
 export default function Ratings() {
   const [loading, setLoading] = useState<boolean>(true);
-  const [_employerId, setEmployerId] = useState<string | null>(null);
+  const [, setEmployerId] = useState<string | null>(null);
   const [ratingsGiven, setRatingsGiven] = useState<RatingRow[]>([]);
   const [ratingsReceived, setRatingsReceived] = useState<RatingRow[]>([]);
   const [applicationsAwaiting, setApplicationsAwaiting] = useState<ApplicationWithJob[]>([]);
@@ -381,12 +381,11 @@ function RateCandidateCard({
   application,
   index,
   onRated,
-  onError: _onError,
 }: {
   application: ApplicationWithJob;
   index: number;
   onRated: (applicationId: string, newRating?: RatingRow) => void;
-  onError: (message: string) => void;
+  onError?: (message: string) => void;
 }) {
   const [score, setScore] = useState<number>(0);
   const [showComment, setShowComment] = useState<boolean>(false);

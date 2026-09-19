@@ -273,10 +273,6 @@ export async function backfillCommuteScores(
       .eq("id", row.id)
       .eq("employer_id", employerId);
 
-    console.log(
-      `Scored ${row.id}: ${score.distanceMiles}mi, ${score.journeyMins}min, ${score.riskLevel}`
-    );
-
     await new Promise((r) => setTimeout(r, 200));
   }
 }

@@ -1,20 +1,30 @@
-/* HireFast global resets — Tailwind handles the rest */
+/* HireFast Clean Enterprise globals */
 * {
   box-sizing: border-box;
 }
 
 body {
   font-family: 'DM Sans', system-ui, sans-serif;
-  background: #090d16;
-  color: #f0f4ff;
+  background: #f8fafc;
+  color: #0f172a;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-code, .mono {
-  font-family: 'DM Mono', monospace;
+code, .mono, .tabular-nums {
+  font-variant-numeric: tabular-nums;
 }
 
 @keyframes shimmer {
   100% { transform: translateX(200%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

@@ -190,6 +190,7 @@ export default function ManageApplicants() {
   }, [employerId]);
 
   const HRS_48_MS = 48 * 60 * 60 * 1000;
+  const nowMs = Date.now();
   const filteredAndSorted = applications
     .filter((a) => {
       if (filterJob !== "all" && a.job_id !== filterJob) return false;
@@ -213,7 +214,7 @@ export default function ManageApplicants() {
       if (filterNoResponse48) {
         if (a.status === "rejected") return false;
         const ref = a.last_contacted_at ?? a.created_at;
-        if (Date.now() - new Date(ref).getTime() <= HRS_48_MS) return false;
+        if (nowMs - new Date(ref).getTime() <= HRS_48_MS) return false;
       }
       return true;
     })

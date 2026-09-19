@@ -1,25 +1,25 @@
 import { Outlet, Link } from "react-router-dom";
-import { HireFastLogo } from '@/components/ui/HireFastLogo'
+import { HireFastLogo } from "@/components/ui/HireFastLogo";
 
 export default function CandidateLayout() {
   return (
-    <div className="min-h-screen bg-[#090d16] text-white">
-      <header className="border-b border-[#1f2d47] bg-[#090d16]/90 backdrop-blur-xl px-6 py-3">
-        <div className="flex items-center justify-between">
+    <div className="min-h-screen bg-slate-50 text-slate-900">
+      <header className="border-b border-slate-200 bg-white px-4 py-3">
+        <div className="mx-auto flex max-w-3xl items-center justify-between">
           <Link to="/" className="flex items-center">
             <HireFastLogo size="md" />
           </Link>
-          <nav className="flex gap-4">
-            <Link to="/candidate/jobs" className="text-[#8494b4] hover:text-white text-sm transition-colors">
+          <nav className="flex gap-4 text-sm">
+            <Link to="/jobs" className="text-slate-500 hover:text-slate-900">
               Jobs
             </Link>
-            <Link to="/candidate/applications" className="text-[#8494b4] hover:text-white text-sm transition-colors">
+            <Link to="/me/applications" className="text-slate-500 hover:text-slate-900">
               Applications
             </Link>
-            <Link to="/candidate/ratings" className="text-[#8494b4] hover:text-white text-sm transition-colors">
-              Feedback
+            <Link to="/me" className="text-slate-500 hover:text-slate-900">
+              Profile
             </Link>
-            <Link to="/settings" className="text-[#8494b4] hover:text-white text-sm transition-colors">
+            <Link to="/settings" className="text-slate-500 hover:text-slate-900">
               Settings
             </Link>
           </nav>
