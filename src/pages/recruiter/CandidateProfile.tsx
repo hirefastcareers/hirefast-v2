@@ -201,8 +201,11 @@ export default function CandidateProfile() {
   // Fetch application, job, candidate, events (scoped to recruiter's employer)
   useEffect(() => {
     if (!id) {
-      setLoading(false);
-      setNotFound(true);
+      // Defer so we don't sync-set in the effect body (React Compiler lint).
+      queueMicrotask(() => {
+        setLoading(false);
+        setNotFound(true);
+      });
       return;
     }
 

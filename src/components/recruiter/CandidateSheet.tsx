@@ -200,19 +200,23 @@ export function CandidateSheet({
 
   useEffect(() => {
     if (!applicationId || !employerId) {
-      setApplication(null);
-      setJob(null);
-      setCandidate(null);
-      setEvents([]);
+      queueMicrotask(() => {
+        setApplication(null);
+        setJob(null);
+        setCandidate(null);
+        setEvents([]);
+      });
       return;
     }
 
     let cancelled = false;
     setLoading(true);
-    setApplication(null);
-    setJob(null);
-    setCandidate(null);
-    setEvents([]);
+    queueMicrotask(() => {
+      setApplication(null);
+      setJob(null);
+      setCandidate(null);
+      setEvents([]);
+    });
 
     async function load() {
       const {
@@ -301,7 +305,7 @@ export function CandidateSheet({
       .eq("application_id", application.id)
       .order("created_at", { ascending: false });
     if (data?.length) setEvents(data as ApplicationEvent[]);
-  }, [application?.id, employerId]);
+  }, [application, employerId]);
 
   const sendInterestCheck = useCallback(async () => {
     if (!application?.id || !employerId) return;
@@ -323,7 +327,7 @@ export function CandidateSheet({
       .eq("application_id", application.id)
       .order("created_at", { ascending: false });
     if (data?.length) setEvents(data as ApplicationEvent[]);
-  }, [application?.id, employerId]);
+  }, [application, employerId]);
 
   const phone = (application?.phone ?? candidate?.phone ?? "").trim() || null;
   const email = application?.email ?? candidate?.email ?? null;

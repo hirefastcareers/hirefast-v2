@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -115,9 +115,13 @@ export default function PostJob() {
     setShiftPatterns([...t.shifts]);
   }, []);
 
-  useEffect(() => {
-    if (sector) applySectorTemplate(sector);
-  }, [sector, applySectorTemplate]);
+  const selectSector = useCallback(
+    (key: SectorKey) => {
+      setSector(key);
+      applySectorTemplate(key);
+    },
+    [applySectorTemplate],
+  );
 
   const addSkill = (value: string) => {
     const trimmed = value.trim();
@@ -295,7 +299,7 @@ export default function PostJob() {
                   <button
                     key={key}
                     type="button"
-                    onClick={() => setSector(key)}
+                    onClick={() => selectSector(key)}
                     className={cn(
                       "flex items-center gap-2 rounded-[10px] border px-3 py-2.5 text-left text-sm transition",
                       isSelected

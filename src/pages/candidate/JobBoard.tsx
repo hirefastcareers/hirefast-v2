@@ -544,7 +544,7 @@ export default function JobBoard() {
   }, [jobs, postcodeCoords, getJobCoords]);
 
   const filteredAndSortedJobs = useMemo(() => {
-    let list = jobs.filter((job) => {
+    const list = jobs.filter((job) => {
       const sectorKey = job.sector?.toLowerCase().trim().replace(/\s*\/.*$/, "").trim() ?? "";
       if (sectorFilter !== "all" && sectorKey !== sectorFilter) return false;
       const q = searchQuery.trim().toLowerCase();
