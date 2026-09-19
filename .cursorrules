@@ -1,11 +1,37 @@
 # HireFast — Cursor Rules
-# Last updated: Query scope audit, ManageApplicants fix, QUERY_SCOPE_AUDIT.md — 01/03/2026
+# Last updated: Truth Engine v2 — Clean Enterprise, 3+2 apply, privacy-safe postcodes — 19/09/2026
 
 ---
 ## Agent Reminder
 Always read `HIREFAST_CONTEXT.md` and `.cursorrules` at the start of a new session. These are the only project guides — do not treat other docs as authoritative unless the user explicitly references them.
 
 **Project owner is a beginner:** They are new to Cursor and Supabase. Explain steps simply, avoid jargon, use numbered “click this then that” instructions. You are the lead developer: recommend next steps, choose the simplest approach, and do in code what you can; only hand off to them for things that must be done in the Dashboard or terminal.
+
+---
+
+## Truth Engine v2 (canonical — overrides older dark-theme notes below where they conflict)
+
+### Design — Clean Enterprise
+- App background: `bg-slate-50`. Surfaces: `bg-white`. Text: `text-slate-900` / `text-slate-600` / `text-slate-500`.
+- Brand: `blue-600` primary buttons, links, focus `ring-blue-600/30`.
+- Shape: `rounded-xl`, `border-slate-200`, `shadow-sm` max. No glassmorphism, no backdrop-blur, no navy hex tokens on new UI.
+- Truth Engine semantic colours ONLY via `TONE_STYLES` in `src/lib/truth-engine.ts` (emerald/amber/rose).
+- Logo: Hire = slate-900, Fast = blue-600. Favicon on slate-50.
+- Font: DM Sans; use `tabular-nums` for figures (not DM Mono requirement on new UI).
+
+### Auth & apply — 3+2 Rule
+- Candidates apply from `/jobs` with **no login wall**. Anonymous session via `signInAnonymously()` if needed.
+- Apply drawer = exactly 3 fields (name, mobile, postcode) + optional RTW + skills (+ optional email upgrade).
+- Full postcode only inside Edge Functions `resolve-postcode` / `resolve-site-postcode`. DB/UI/localStorage = `partial_postcode` + centroid (`hf_loc`).
+- Magic links only. Recruiter login: `signInWithOtp({ shouldCreateUser: false })`.
+- Scoring constants live in `src/lib/truth-engine.ts` AND `public.get_job_applicants()` SQL — must stay in sync.
+- Recruiters: every query scoped by `employer_id`; applicants list ONLY from RPC `get_job_applicants`.
+- Org switcher: `OrgProvider` / `useOrg()`.
+
+### Primary routes
+- `/jobs`, `/me`, `/me/applications`, `/privacy`, `/terms`
+- `/recruiter`, `/recruiter/login`, `/recruiter/post-job`, `/recruiter/jobs/:id`
+- Legacy `/candidate/*` onboarding is optional under `/me`; `/candidate/jobs` redirects to `/jobs`.
 
 ---
 

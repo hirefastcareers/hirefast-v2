@@ -145,6 +145,24 @@ _(Also mirrored at end of run — keep in sync with Phase 8.)_
 
 ---
 
-## 9. Unfinished / deferred
+## 9. Unfinished / deferred (end of run)
 
-_Filled at end of run._
+| Item | Notes |
+|------|--------|
+| Live migration + Edge Function deploy | Manual — Tom (see §8) |
+| Anonymous auth enable | Manual — Tom |
+| Cross-org access live test | Needs two recruiter accounts in production Supabase |
+| Anonymous → existing account merge | TODO logged in `HIREFAST_CONTEXT.md`; OTP fallback only |
+| Marketing landings still dark navy | `/` and `/recruiters` retain older visual language; primary product routes are Clean Enterprise |
+| Legacy Session pages | `ManageApplicants`, old `JobBoard`, `CandidateSheet`, ratings, Settings still use navy tokens; `/candidate/jobs` redirects to `/jobs` |
+| Job detail edit (skills/sponsorship/max commute) | Post-create editing page not built — defaults from sector templates |
+| Lighthouse mobile on `/jobs` | Not run in this environment (no authenticated production URL with migration applied); main JS chunk reduced via recruiter lazy-load (~724 kB vs ~945 kB) |
+| Legal copy | `/privacy` and `/terms` marked TODO: legal review |
+
+## 10. Quality pass notes (Phase 7)
+
+- Skeleton / empty / error states on `/jobs`, `/me/applications`, recruiter dashboard & applicants.
+- British English: Postcode, Organise not used incorrectly; £ via `format.ts`; dates DD/MM/YYYY.
+- Privacy: Register no longer writes full postcode to localStorage; apply uses Edge Function; `hf_loc` stores partial only.
+- Accessibility: labelled inputs on apply/post-job; `min-h-11` / `size="lg"` primary actions; focus via Shadcn ring.
+- `/privacy` and `/terms` linked from apply drawer footer.
