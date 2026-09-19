@@ -23,7 +23,15 @@ export default defineConfig([
       // Shadcn UI co-exports variant helpers with components.
       'react-refresh/only-export-components': [
         'error',
-        { allowConstantExport: true, allowExportNames: ['buttonVariants', 'badgeVariants', 'tabsListVariants'] },
+        {
+          allowConstantExport: true,
+          allowExportNames: [
+            'buttonVariants',
+            'badgeVariants',
+            'tabsListVariants',
+            'useOrg',
+          ],
+        },
       ],
       // Data-fetch effects commonly reset loading/entity state; Compiler purity
       // rules flag Date.now / sync setState in ways that don't match our patterns.
