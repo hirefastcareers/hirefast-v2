@@ -40,7 +40,7 @@ export default function MagicLinkHandler() {
 
         if (recruiterRows && recruiterRows.length > 0) {
           setStatus("recruiter");
-          navigate("/recruiter/applicants", { replace: true });
+          navigate("/recruiter", { replace: true });
         } else {
           const { data: existingCandidate } = await supabase
             .from("candidates")
@@ -52,16 +52,27 @@ export default function MagicLinkHandler() {
 
           if (existingCandidate) {
             setStatus("candidate");
-            navigate("/candidate/jobs", { replace: true });
+            navigate("/jobs", { replace: true });
           } else {
             const pendingRaw = localStorage.getItem("hirefast_pending_candidate");
-            const pending = pendingRaw ? (JSON.parse(pendingRaw) as { full_name?: string; email?: string; postcode?: string }) : {};
+            const pending = pendingRaw
+              ? (JSON.parse(pendingRaw) as {
+                  full_name?: string;
+                  email?: string;
+                  postcode?: string;
+                })
+              : {};
+
+            // Privacy: never persist full postcode — outward only if present
+            const rawPc = (pending.postcode ?? "").replace(/\s+/g, "").toUpperCase();
+            const partial =
+              rawPc.length >= 5 ? rawPc.slice(0, Math.max(rawPc.length - 3, 0)) : rawPc || null;
 
             const { error: insertError } = await supabase.from("candidates").insert({
               user_id: session.user.id,
               email: session.user.email ?? pending.email ?? "",
               full_name: pending.full_name ?? "",
-              postcode: pending.postcode ?? "",
+              partial_postcode: partial,
             });
 
             if (!mounted) return;
@@ -73,7 +84,7 @@ export default function MagicLinkHandler() {
 
             localStorage.removeItem("hirefast_pending_candidate");
             setStatus("candidate");
-            navigate("/candidate/verify", { replace: true });
+            navigate("/jobs", { replace: true });
           }
         }
         return;
